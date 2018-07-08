@@ -3,6 +3,9 @@ An angular package for a very simple yet powerfull autocomplete component
 
 ![slarn-autocomplete preview](doc/ex.png)
 
+# Demo
+You can find a live demo [here](https://angular-kejswy.stackblitz.io/)
+
 # Installation
 1. Run inside your terminal `npm i slarn-autocomplete`<br>
 2. Add `SlarnAutocompleteModule` to `app.module.ts`:<br>
