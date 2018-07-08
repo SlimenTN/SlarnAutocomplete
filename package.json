@@ -1,8 +1,27 @@
 {
   "name": "slarn-autocomplete",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
-  }
+  },
+  "description": "An angular package for a very simple yet powerfull autocomplete component",
+  "main": "karma.conf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SlimenTN/SlarnAutocomplete.git"
+  },
+  "keywords": [
+    "angular",
+    "autocomplete"
+  ],
+  "author": "Slimen Arnaout <arnaout.slimen@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SlimenTN/SlarnAutocomplete/issues"
+  },
+  "homepage": "https://github.com/SlimenTN/SlarnAutocomplete#readme"
 }
