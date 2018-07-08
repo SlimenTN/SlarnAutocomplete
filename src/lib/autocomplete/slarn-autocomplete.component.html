@@ -1,0 +1,36 @@
+<div #container class="slarn-autocomplete-container" style="position: relative;">
+    <!-- Hidden input will contain the key of the selected item -->
+    <input #idInput type="hidden" 
+        [attr.name]="(configuration.input) ? configuration.input.name : null" 
+        [value]="(_selectedItem) ? _selectedItem[configuration.key] : ''"/>  
+    
+    <!-- Autocomplete input will be visible to the user and contain the value -->
+    <input #autocompleteInput id="ac" type="text" autocomplete="off"
+        (keyup)="onKeyup($event)" (keydown)="onKeyDown($event)"
+        [value]="(_selectedItem) ? _selectedItem[configuration.value] : ''"
+        [attr.placeHolder]="(configuration.input) ? configuration.input.placeHolder : null">
+    <!-- Display all button -->
+    <button #displayAllBtn
+        class="toggle-suggestions-display"
+        (click)="toggleDisplaySuggestions($event)">
+    </button>
+
+    <div class="suggestions" [style.display]="(displaySuggestions) ? 'block' : 'none'">
+        <!-- Suggestions list  -->
+        <slarn-ac-suggestion *ngFor="let e of filteredItems" [item]="e" (onSuggestionClicked)="performSelection($event)">
+            <div [innerHTML]="buildView(e)"></div>
+        </slarn-ac-suggestion>
+
+        <!-- Displayed when no match found -->
+        <div *ngIf="filteredItems != null && filteredItems.length == 0 && !loadingData"
+            class="no-match-found"
+            [innerHTML]="configuration.emptyListText">
+        </div>
+
+        <!--  Displayed when loading data from api -->
+        <div *ngIf="loadingData"
+            class="loading-data"
+            [innerHTML]="configuration.loadingText">
+        </div>
+    </div>
+</div>

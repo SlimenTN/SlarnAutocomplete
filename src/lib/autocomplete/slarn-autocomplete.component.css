@@ -1,0 +1,51 @@
+.slarn-autocomplete-container{
+    border: solid 1px #cacaca;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+}
+
+.slarn-autocomplete-container input{
+    margin-bottom: 0;
+    width: 100%;
+    box-sizing : border-box;
+    border: none;
+    padding-left: 5px;
+}
+
+.slarn-autocomplete-container .suggestions{
+    border: solid 1px #cacaca;
+    position: absolute;
+    width: 100%;
+    background: white;
+    z-index: 2;
+    display: block;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.slarn-autocomplete-container .no-match-found,.loading-data{
+    padding: 5px;
+}
+
+.slarn-autocomplete-container button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiBwcLEx22EzYqAAAAW0lEQVQoz2NgGAyAm2EFgxBWGRGG1QysTAxfGZ4z7MGiRIRhH8Mdht8QTj/DOTQlwgwXGdqRBVCVCDNcQJVGVSLEcB5TGqEEpzRMyTnc0gwMDAytDPV0DWSiAAC0ghX2P8wBMwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOC0wNy0wN1QxMToxOToyOSswMjowMHRLTC0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTgtMDctMDdUMTE6MTk6MjkrMDI6MDAFFvSRAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAABJRU5ErkJggg==');
+    background-repeat: no-repeat;
+    background-position: center center;
+    cursor: pointer;
+}
+
+.slarn-autocomplete-container .toggle-suggestions-display{
+    border-left: solid 1px #cacaca;
+    border-bottom: none;
+    border-right: none;
+    border-top: none;
+    background-color: white;
+}
+.slarn-autocomplete-container .toggle-suggestions-display:hover{
+    background-color: #ececec;
+}
