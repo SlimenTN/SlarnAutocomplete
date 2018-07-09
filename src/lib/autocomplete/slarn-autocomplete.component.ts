@@ -35,8 +35,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         searchTriggerKeys: [46, 222, 8, 32],
         navigationKeys: [38, 40]// up & down keys
     };
-    private propagateChange = (_: any) => {
-    };
+    private propagateChange: any = null;
     private typingTimer = null;
     private doneTypingInterval = 250;
 
@@ -46,12 +45,11 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     _selectedItem: any;
 
     @ViewChild('autocompleteInput') autocompleteInput: ElementRef;
-    @ViewChild('idInput') idInput: ElementRef;
     @ViewChild('displayAllBtn') displayAllBtn: ElementRef;
     @ViewChild('container') container: ElementRef;
 
     @Input('configuration') configuration: ACLocalConfiguration | ACRemoteConfiguration;
-    @Output('onItemSelected') select: EventEmitter<any> = new EventEmitter();
+    @Output('onItemSelected') onItemSelected: EventEmitter<any> = new EventEmitter();
 
     constructor(private _service: ACService) { }
 
@@ -94,10 +92,10 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      * Make sure that the display all button get the same width as height
      */
     private adjustAutocompleteElementsSize() {
-        let height = this.displayAllBtn.nativeElement.offsetHeight;
-        this.displayAllBtn.nativeElement.style.width = height + 'px';
+        // let height = this.displayAllBtn.nativeElement.offsetHeight;
+        // this.displayAllBtn.nativeElement.style.width = height + 'px';
 
-        this.autocompleteInput.nativeElement.style.height = height + 'px';
+        // this.autocompleteInput.nativeElement.style.height = height + 'px';
     }
 
     /**
@@ -179,7 +177,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
 
         // Regex to find the words between to #
         // may contain numbers and dots
-        let regx = /\#(?:[a-zA-Z0-9_\.]+)\#/g;
+        const regx = /\#(?:[a-zA-Z0-9_\.]+)\#/g;
 
         // get matched result
         this._templateVariables = this.configuration.template.match(regx);
@@ -329,11 +327,11 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      */
     private dispatchData() {
         // emit the whole object when item selected
-        this.select.emit(this._selectedItem);
+        this.onItemSelected.emit(this._selectedItem);
 
         // propagate only the key to the form
-        console.log('propagation _selectedId: ' + this._selectedId);
-        this.propagateChange(this._selectedId);
+        // console.log('propagation _selectedId: ' + this._selectedId);
+        if(this.propagateChange != null) this.propagateChange(this._selectedId);
     }
 
     registerOnChange(fn) {
@@ -375,13 +373,13 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
 })
 export class SlarnAutocompleteSuggestionComponent implements OnInit {
     @Input('item') item: any;
-    @Output('onSuggestionClicked') select: EventEmitter<any> = new EventEmitter();
+    @Output('onSuggestionClicked') onSuggestionClicked: EventEmitter<any> = new EventEmitter();
 
     constructor() { }
 
     ngOnInit() { }
 
-    selectItem() { this.select.emit(this.item); }
+    selectItem() { this.onSuggestionClicked.emit(this.item); }
 }
 
 /**

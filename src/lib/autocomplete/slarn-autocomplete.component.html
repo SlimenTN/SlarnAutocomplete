@@ -1,9 +1,18 @@
 <div #container class="slarn-autocomplete-container" style="position: relative;">
-    <!-- Hidden input will contain the key of the selected item -->
-    <input #idInput type="hidden" 
-        [attr.name]="(configuration.input) ? configuration.input.name : null" 
-        [value]="(_selectedItem) ? _selectedItem[configuration.key] : ''"/>  
+    <!-- Hidden select will contain the key of the selected item -->        
+    <select  [attr.name]="(configuration.input) ? configuration.input.name : null">
+        <option [value]="(_selectedItem) ? _selectedItem[configuration.key] : ''">
+            {{(_selectedItem) ? _selectedItem[configuration.value] : '' }}
+        </option>
+    </select>
     
+    <span class="selected-options"><span class="text">SOPELEC</span> <span class="remove">x</span></span>
+    <span class="selected-options"><span class="text">SOCIETE DES TRAVAUX MODERNES</span> <span class="remove">x</span></span>
+    <span class="selected-options"><span class="text">SOPELEC</span> <span class="remove">x</span></span>
+    <!-- <span class="selected-options"><span class="text">SOCIETE DES TRAVAUX MODERNES</span> <span class="remove">x</span></span> -->
+    <span class="selected-options"><span class="text">MILANO DMCC</span> <span class="remove">x</span></span>
+    <span class="selected-options"><span class="text">GOOGLE</span> <span class="remove">x</span></span>
+
     <!-- Autocomplete input will be visible to the user and contain the value -->
     <input #autocompleteInput id="ac" type="text" autocomplete="off"
         (keyup)="onKeyup($event)" (keydown)="onKeyDown($event)"
