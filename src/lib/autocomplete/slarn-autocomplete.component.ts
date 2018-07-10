@@ -25,7 +25,9 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 })
 export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, ControlValueAccessor {
     private _templateVariables: RegExpMatchArray;
-    private _selectedId: number | string;
+    private _selectedId: number | string | Array<number | string>;
+    _selectedItem: any | Array<any>;
+
     /**
      * list contains code of keys that will trigger the search function
      * and the keys that represent navigation action
@@ -42,11 +44,11 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     displaySuggestions: boolean = false;
     loadingData: boolean = false;
     filteredItems: Array<any> = [];
-    _selectedItem: any;
 
     @ViewChild('autocompleteInput') autocompleteInput: ElementRef;
     @ViewChild('displayAllBtn') displayAllBtn: ElementRef;
     @ViewChild('container') container: ElementRef;
+    @ViewChild('spanX') spanX: ElementRef;
 
     @Input('configuration') configuration: ACLocalConfiguration | ACRemoteConfiguration;
     @Output('onItemSelected') onItemSelected: EventEmitter<any> = new EventEmitter();
@@ -54,19 +56,19 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     constructor(private _service: ACService) { }
 
     @Input()
-    set selectedId(value: number | string) {
+    set selectedId(value: number | string | Array<number | string>) {
         this._selectedId = value;
         // after setting key value we search for the related item
         this.searchAndSelectItemFromKey();
     }
 
-    get selectedId(): number | string {
+    get selectedId(): number | string | Array<number | string> {
         return this._selectedId;
     }
 
     ngOnInit() { 
         this.initConfiguration();
-        this.adjustAutocompleteElementsSize();   
+        // this.adjustAutocompleteElementsSize();   
     }
 
     ngAfterViewInit(){
@@ -86,6 +88,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     checkIfClickedInside = (event: Event) => {
         let isClickInside = this.container.nativeElement.contains(event.target);
         if(!isClickInside) this.displaySuggestions = false;
+        else this.autocompleteInput.nativeElement.focus();
     }
 
     /**
@@ -128,10 +131,9 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      * Init default configuration
      */
     private initConfiguration() {
-        if (!this.configuration.emptyListText) 
-            this.configuration.emptyListText = 'No match found!';
-        if (!this.configuration.loadingText) 
-            this.configuration.loadingText = 'Loading data...';
+        if (!this.configuration.emptyListText) this.configuration.emptyListText = 'No match found!';
+        if (!this.configuration.loadingText) this.configuration.loadingText = 'Loading data...';
+        if (!this.configuration.multiple) this.configuration.multiple = false;
     }
 
     /**
@@ -159,7 +161,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         // console.log('this.configuration.key: ' + this.configuration.key);
         // console.log('_selectedId: ' + this._selectedId);
         data.forEach(item => {
-            console.log('item[this.configuration.key]: ' + item[this.configuration.key]);
+            // console.log('item[this.configuration.key]: ' + item[this.configuration.key]);
             if (item[this.configuration.key] == this._selectedId) {
                 console.log('found', item);
                 this._selectedItem = item;
@@ -183,11 +185,17 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         this._templateVariables = this.configuration.template.match(regx);
     }
 
+    private adjustInputWidth(){
+        this.spanX.nativeElement.innerText = this.autocompleteInput.nativeElement.value;
+        this.autocompleteInput.nativeElement.style.width = this.spanX.nativeElement.offsetWidth+'px';
+    }
+
     /**
      * fired each time a user press a key
      * @param $event
      */
     onKeyup($event) {
+        
         if (this.fireSearchKey($event)) {
             const reg = $event.target.value;
             if (reg == '') {
@@ -221,6 +229,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      * when user finished typing
      */
     onKeyDown($event) {
+        this.adjustInputWidth();
         if (this.typingTimer != null) clearTimeout(this.typingTimer);
     }
 
@@ -314,10 +323,18 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      */
     performSelection(item) {
         // console.log('selected item', item);
-        this._selectedItem = item;
-        this._selectedId = this._selectedItem[this.configuration.key];
-        this.autocompleteInput.nativeElement.value = this._selectedItem[this.configuration.value];
-        this.displaySuggestions = false;
+        if(this.configuration.multiple){
+            if(this._selectedItem == null) this._selectedItem = [];
+            this._selectedItem.push(item);
+            if(this._selectedId == null) this._selectedId = [];
+            (<Array<number | string>> this._selectedId).push(item[this.configuration.key]);
+            this.autocompleteInput.nativeElement.value = '';
+        }else{
+            this._selectedItem = item;
+            this._selectedId = item[this.configuration.key];
+            this.autocompleteInput.nativeElement.value = this._selectedItem[this.configuration.value];
+            this.displaySuggestions = false;
+        }
 
         this.dispatchData();
     }
@@ -400,18 +417,19 @@ export interface Configuration {
     value: string;
 
     // name will be giving to the input
-    input?: ACInput;
+    name?: string
+
+    // placeholder of the input
+    placeHolder?: string;
+
+    // allow multiple selection (default: false)
+    multiple?: boolean;
 
     // text will be displayed when loadign data remotly
     loadingText?: string;
 
     // text will be displayed when no match found
     emptyListText?: string;
-}
-
-export interface ACInput {
-    name?: string;
-    placeHolder?: string;
 }
 
 /**

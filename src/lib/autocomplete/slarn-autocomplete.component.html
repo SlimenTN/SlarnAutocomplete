@@ -1,23 +1,37 @@
 <div #container class="slarn-autocomplete-container" style="position: relative;">
     <!-- Hidden select will contain the key of the selected item -->        
-    <select  [attr.name]="(configuration.input) ? configuration.input.name : null">
-        <option [value]="(_selectedItem) ? _selectedItem[configuration.key] : ''">
-            {{(_selectedItem) ? _selectedItem[configuration.value] : '' }}
-        </option>
+    <select  
+        [attr.name]="(configuration.name) ? configuration.name : null"
+        [attr.multiple]="(configuration.multiple) ? 'multiple' : null">
+        <ng-container *ngIf="configuration.multiple && _selectedItem != null">
+            <option *ngFor="let i of _selectedItem" [value]="_selectedItem[configuration.key]" selected>
+                {{_selectedItem[configuration.key]}}
+            </option>
+        </ng-container>
+        <ng-container *ngIf="!configuration.multiple">
+            <option [value]="(_selectedItem) ? _selectedItem[configuration.key] : ''" selected>
+                {{(_selectedItem) ? _selectedItem[configuration.value] : '' }}
+            </option>
+        </ng-container>
     </select>
     
-    <span class="selected-options"><span class="text">SOPELEC</span> <span class="remove">x</span></span>
-    <span class="selected-options"><span class="text">SOCIETE DES TRAVAUX MODERNES</span> <span class="remove">x</span></span>
-    <span class="selected-options"><span class="text">SOPELEC</span> <span class="remove">x</span></span>
-    <!-- <span class="selected-options"><span class="text">SOCIETE DES TRAVAUX MODERNES</span> <span class="remove">x</span></span> -->
-    <span class="selected-options"><span class="text">MILANO DMCC</span> <span class="remove">x</span></span>
-    <span class="selected-options"><span class="text">GOOGLE</span> <span class="remove">x</span></span>
+    <ng-container *ngIf="configuration.multiple && _selectedItem != null">
+        <span class="selected-options" *ngFor="let i of _selectedItem">
+            <span class="text">{{i[configuration.value]}}</span> <span class="remove">x</span>
+        </span>
+        <!-- <span class="selected-options"><span class="text">SOCIETE DES TRAVAUX MODERNES</span> <span class="remove">x</span></span>
+        <span class="selected-options"><span class="text">SOPELEC</span> <span class="remove">x</span></span>
+        <span class="selected-options"><span class="text">SOCIETE DES TRAVAUX MODERNES</span> <span class="remove">x</span></span>
+        <span class="selected-options"><span class="text">MILANO DMCC</span> <span class="remove">x</span></span>
+        <span class="selected-options"><span class="text">GOOGLE</span> <span class="remove">x</span></span> -->
+    </ng-container>
 
     <!-- Autocomplete input will be visible to the user and contain the value -->
     <input #autocompleteInput id="ac" type="text" autocomplete="off"
         (keyup)="onKeyup($event)" (keydown)="onKeyDown($event)"
-        [value]="(_selectedItem) ? _selectedItem[configuration.value] : ''"
-        [attr.placeHolder]="(configuration.input) ? configuration.input.placeHolder : null">
+        [attr.value]="(!configuration.multiple && _selectedItem != null) ? _selectedItem[configuration.value] : null"
+        [attr.placeHolder]="(configuration.placeHolder) ? configuration.placeHolder : null">
+    <span #spanX style="display: none;"></span>
     <!-- Display all button -->
     <button #displayAllBtn
         class="toggle-suggestions-display"
