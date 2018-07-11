@@ -59,6 +59,16 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     set selectedId(value: number | string | Array<number | string>) {
         this._selectedId = value;
         // after setting key value we search for the related item
+        if(this.configuration.multiple && !Array.isArray(value)){
+          console.log('multiple autocomplete and value not an array, converting _selectedId to array and push the value');
+          this._selectedId = [];
+          this._selectedId.push(value);
+
+        }
+
+        if(!this.configuration.multiple && Array.isArray(value))
+          throw new Error('You have passed an array value to be selected\n either change the value or set the "multiple" option to true in the configuration.');
+
         this.searchAndSelectItemFromKey();
     }
 
@@ -66,15 +76,14 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         return this._selectedId;
     }
 
-    ngOnInit() { 
+    ngOnInit() {
         this.initConfiguration();
-        // this.adjustAutocompleteElementsSize();   
     }
 
     ngAfterViewInit(){
         this.extractTemplateVariables();
-        
-        // I called this listener in ngAfterViewInit because I cant the listener 
+
+        // I called this listener in ngAfterViewInit because I cant the listener
         // to be set one time
         // ngOnInit is fired after ngOnChanges which is called eafter any change in the view
         document.addEventListener('click', this.checkIfClickedInside, true);
@@ -89,17 +98,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         let isClickInside = this.container.nativeElement.contains(event.target);
         if(!isClickInside) this.displaySuggestions = false;
         else this.autocompleteInput.nativeElement.focus();
-    }
-
-    /**
-     * Make sure that the display all button get the same width as height
-     */
-    private adjustAutocompleteElementsSize() {
-        // let height = this.displayAllBtn.nativeElement.offsetHeight;
-        // this.displayAllBtn.nativeElement.style.width = height + 'px';
-
-        // this.autocompleteInput.nativeElement.style.height = height + 'px';
-    }
+    };
 
     /**
      * Clear autocomplete selection
@@ -157,16 +156,25 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      * @param data: any[]
      */
     private selectItemFromData(data: Array<any>) {
-        this._selectedItem = null;
-        // console.log('this.configuration.key: ' + this.configuration.key);
-        // console.log('_selectedId: ' + this._selectedId);
-        data.forEach(item => {
+
+        if(this.configuration.multiple){
+          this._selectedItem = [];
+          data.forEach(item => {
+            // console.log('item[this.configuration.key]: ' + item[this.configuration.key]);
+            if ((<Array<number | string>> this._selectedId).includes(item[this.configuration.key])) {
+              this._selectedItem.push(item);
+            }
+          });
+        }else{
+          this._selectedItem = null;
+          data.forEach(item => {
             // console.log('item[this.configuration.key]: ' + item[this.configuration.key]);
             if (item[this.configuration.key] == this._selectedId) {
-                console.log('found', item);
-                this._selectedItem = item;
+              console.log('found', item);
+              this._selectedItem = item;
             }
-        });
+          });
+        }
     }
 
     /**
@@ -185,23 +193,20 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         this._templateVariables = this.configuration.template.match(regx);
     }
 
-    private adjustInputWidth(){
-        this.spanX.nativeElement.innerText = this.autocompleteInput.nativeElement.value;
-        this.autocompleteInput.nativeElement.style.width = this.spanX.nativeElement.offsetWidth+'px';
-    }
-
     /**
      * fired each time a user press a key
      * @param $event
      */
     onKeyup($event) {
-        
+
         if (this.fireSearchKey($event)) {
             const reg = $event.target.value;
             if (reg == '') {
+              if(!this.configuration.multiple){
                 this.displaySuggestions = false;
                 this.clearAutocomplete();
                 this.dispatchData();
+              }
             } else {
                 this.displaySuggestions = true;
                 if ((<ACLocalConfiguration> this.configuration).data) {// if it's local configuration
@@ -224,12 +229,28 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         }
     }
 
+  /**
+   * Delete item from selected list
+   * And dispatch data
+   * @param index
+   */
+  deleteFromSelectedItems(index: number){
+      this._selectedItem.splice(index, 1);
+      this._selectedId.splice(index, 1);
+
+      if(this._selectedItem.length == 0){
+        this._selectedItem = null;
+        this._selectedId = null;
+      }
+
+      this.dispatchData();
+    }
+
     /**
      * After key down clear used timer to calculate
      * when user finished typing
      */
     onKeyDown($event) {
-        this.adjustInputWidth();
         if (this.typingTimer != null) clearTimeout(this.typingTimer);
     }
 

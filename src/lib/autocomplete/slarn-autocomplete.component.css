@@ -13,11 +13,15 @@
 
 .slarn-autocomplete-container input{
     margin-bottom: 0;
-    display:table-cell; 
+    display:table-cell;
     width: 10px;
     box-sizing : border-box;
     border: none;
     min-height: 25px;
+}
+
+.slarn-autocomplete-container input:focus{
+  outline: none;
 }
 
 .slarn-autocomplete-container .selected-options{
