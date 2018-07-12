@@ -18,7 +18,7 @@
     <!-- When autocomplete is multiple _selectedItems will be displayed here -->
     <ng-container *ngIf="configuration.multiple && _selectedItem != null">
         <span class="selected-options" *ngFor="let si of _selectedItem; let o = index;">
-            <span class="text" *ngIf="si.elem != undefined">{{si.elem[configuration.value]|json}}</span> <span class="remove" (click)="deleteFromSelectedItems(o)">x</span>
+            <span class="text" *ngIf="si.elem != undefined">{{si.elem[configuration.value]}}</span> <span class="remove" (click)="deleteFromSelectedItems(o, si)">x</span>
         </span>
     </ng-container>
 
@@ -32,7 +32,7 @@
     <!-- Display all button -->
     <button #displayAllBtn
         class="toggle-suggestions-display"
-        (click)="toggleDisplaySuggestions($event)">
+        (click)="toggleDisplaySuggestions()">
     </button>
 
     <div class="suggestions" [style.display]="(displaySuggestions) ? 'block' : 'none'">

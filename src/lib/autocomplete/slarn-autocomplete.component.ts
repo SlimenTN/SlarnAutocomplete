@@ -26,7 +26,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, ControlValueAccessor {
     private _templateVariables: RegExpMatchArray;
     private _selectedId: number | string | Array<number | string>;
-    _selectedItem: any | Array<any>;
+    _selectedItem: any | Array<SelectedItem>;
 
     /**
      * list contains code of keys that will trigger the search function
@@ -56,24 +56,57 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     constructor(private _service: ACService) { }
 
     @Input()
-    set selectedId(value: number | string | Array<number | string>) {
+    set selectedId(value: number | string | Array<number | string>) {  
+        this.filterSelectedValue(value);
+        this.searchAndSelectItemFromKey();
+    }
+
+    /**
+     * Filter given value and make sure that the autocomplete gets the correct data
+     * to work as expected
+     * @param value 
+     */
+    private filterSelectedValue(value){
         this._selectedId = value;
         // after setting key value we search for the related item
         if(this.configuration.multiple && !Array.isArray(value)){
           console.log('multiple autocomplete and value not an array, converting _selectedId to array and push the value');
           this._selectedId = [];
           this._selectedId.push(value);
-
         }
 
         if(!this.configuration.multiple && Array.isArray(value))
           throw new Error('You have passed an array value to be selected\n either change the value or set the "multiple" option to true in the configuration.');
 
-        this.searchAndSelectItemFromKey();
+        if((Array.isArray(value) && this.arrayHasObject(value))
+            || (!Array.isArray(value) && typeof value === 'object'))
+            throw new Error('The type of "selectedId" must be number, string or Array of numbers or strings!');
     }
 
+    /**
+     * Check array contain one or many objects
+     * @param value 
+     */
+    private arrayHasObject(value: Array<any>) {
+        let hasObject = false;
+        value.forEach(e => {
+            if(typeof e === 'object') hasObject = true;
+        });
+        return hasObject;
+    }
+
+    /**
+     * Return the selected key(s)
+     */
     get selectedId(): number | string | Array<number | string> {
         return this._selectedId;
+    }
+
+    /**
+     * Return the selected item(s)
+     */
+    get selectedItem(): any {
+        return (Array.isArray(this._selectedItem)) ? this.extractSelectedItems() : this._selectedItem;
     }
 
     ngOnInit() {
@@ -109,7 +142,8 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         this.filteredItems = [];
     }
 
-    toggleDisplaySuggestions($event) {
+    toggleDisplaySuggestions() {
+        // this.displaySuggestions = !this.displaySuggestions;
         if(!this.displaySuggestions){
             this.displaySuggestions = true;
             if ((<ACLocalConfiguration> this.configuration).data) {// if it's local configuration
@@ -133,6 +167,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         if (!this.configuration.emptyListText) this.configuration.emptyListText = 'No match found!';
         if (!this.configuration.loadingText) this.configuration.loadingText = 'Loading data...';
         if (!this.configuration.multiple) this.configuration.multiple = false;
+        if (!this.configuration.template) this.configuration.template = '<div>#'+this.configuration.value+'#</div>';
     }
 
     /**
@@ -159,18 +194,20 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
 
         if(this.configuration.multiple){
           this._selectedItem = [];
+          let counter = 0;
           data.forEach(item => {
             // console.log('item[this.configuration.key]: ' + item[this.configuration.key]);
             if ((<Array<number | string>> this._selectedId).includes(item[this.configuration.key])) {
-              this._selectedItem.push(item);
+                let si: SelectedItem = {elem: item, indexInFiltredItems: counter};
+                this._selectedItem.push(si);
             }
+            counter++;
           });
         }else{
           this._selectedItem = null;
           data.forEach(item => {
             // console.log('item[this.configuration.key]: ' + item[this.configuration.key]);
             if (item[this.configuration.key] == this._selectedId) {
-              console.log('found', item);
               this._selectedItem = item;
             }
           });
@@ -182,9 +219,6 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      * will be used to dislay data in the suggestions panel
      */
     private extractTemplateVariables() {
-        if (this.configuration.template == '' || this.configuration.template == null)
-            throw new Error('You have forgot to specify the template of your autocomplete');
-
         // Regex to find the words between to #
         // may contain numbers and dots
         const regx = /\#(?:[a-zA-Z0-9_\.]+)\#/g;
@@ -234,9 +268,10 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    * And dispatch data
    * @param index
    */
-  deleteFromSelectedItems(index: number){
-      this._selectedItem.splice(index, 1);
-      (<Array<number | string>> this._selectedId).splice(index, 1);
+  deleteFromSelectedItems(indexInSelectedItems: number, si: SelectedItem){
+      this._selectedItem.splice(indexInSelectedItems, 1);
+      this.filteredItems.splice(si.indexInFiltredItems, 0, si.elem);
+      (<Array<number | string>> this._selectedId).splice(indexInSelectedItems, 1);
 
       if(this._selectedItem.length == 0){
         this._selectedItem = null;
@@ -273,10 +308,30 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      */
     private searchLocally(word: string, data: Array<any>) {
         this.filteredItems = [];
+        const selectedItemsAsString = JSON.stringify(this._selectedItem);
         data.forEach((item) => {
             let _str = JSON.stringify(item);
-            if (_str.toLowerCase().indexOf(word.toLowerCase()) != -1) this.filteredItems.push(item);
+            if (
+                _str.toLowerCase().indexOf(word.toLowerCase()) != -1 // if word exist in item
+                && !this.existInSelectedItems(item) // and does not exist in selected items
+               ) this.filteredItems.push(item);// then add it to filteredItems to be displayed in suggestions list
         });
+    }
+    
+    /**
+     * Check if given item exist in _selectedItem array ot not
+     * @param item 
+     */
+    private existInSelectedItems(item: any): boolean{
+        let exist: boolean;
+        if(!Array.isArray(this._selectedItem)){
+            exist = false;
+        }else{
+            exist = (this._selectedItem.find(si => 
+                si.elem[this.configuration.key] === item[this.configuration.key]
+            ) != undefined) ? true : false;
+        }
+        return exist;
     }
 
     /**
@@ -347,10 +402,11 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         // console.log('selected item', item);
         if(this.configuration.multiple){
             if(this._selectedItem == null) this._selectedItem = [];
-            let o = {elem: item, indexInFilteredList: index};
+            let o: SelectedItem = {elem: item, indexInFiltredItems: index};
             console.log('o', o);
             this._selectedItem.push(o);
             this.filteredItems.splice(index, 1);
+            if(this.filteredItems.length == 0) this.displaySuggestions = false;// if filteredItems list is empty then hide suggestions list
 
             if(this._selectedId == null) this._selectedId = [];
             (<Array<number | string>> this._selectedId).push(item[this.configuration.key]);
@@ -370,11 +426,25 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
      */
     private dispatchData() {
         // emit the whole object when item selected
-        this.onItemSelected.emit(this._selectedItem);
+        if(Array.isArray(this._selectedItem))
+            this.onItemSelected.emit(this.extractSelectedItems());
+        else
+            this.onItemSelected.emit(this._selectedItem);
 
         // propagate only the key to the form
         // console.log('propagation _selectedId: ' + this._selectedId);
         if(this.propagateChange != null) this.propagateChange(this._selectedId);
+    }
+
+    /**
+     * Extract items from _selectedItems
+     */
+    private extractSelectedItems(){
+        let items = [];
+        (<Array<SelectedItem>> this._selectedItem).forEach(si => {
+            items.push(si.elem);
+        });
+        return items;
     }
 
     registerOnChange(fn) {
@@ -383,11 +453,12 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
 
     registerOnTouched(fn: any) { }
 
-    writeValue(value: any) {
-        this._selectedId = value;
+    writeValue(value) {
         // after setting key value we search for the related item
-        if (value != '' && value != null && value != undefined)
-            this.searchAndSelectItemFromKey();
+        if (value != '' && value != null && value != undefined){
+             this.filterSelectedValue(value);
+             this.searchAndSelectItemFromKey();   
+        }
     }
 }
 
@@ -429,9 +500,6 @@ export class SlarnAutocompleteSuggestionComponent implements OnInit {
  * AutoComplete configuration
  */
 export interface Configuration {
-    // template that will be displayed in the suggestions list
-    template: string;
-
     /**
      * key will be stored in the input
      * must be the unique value of the object (ex: id)
@@ -442,6 +510,11 @@ export interface Configuration {
     // value will be displayed to the user in the input
     value: string;
 
+    // template that will be displayed in the suggestions list
+    // if this attribute is not defined then the autocomplete will 
+    // use the default template and display only the value
+    template?: string;
+
     // name will be giving to the input
     name?: string
 
@@ -451,11 +524,11 @@ export interface Configuration {
     // allow multiple selection (default: false)
     multiple?: boolean;
 
-    // text will be displayed when loadign data remotly
-    loadingText?: string;
+    // text or html will be rendered when loadign data remotly
+    loadingView?: string;
 
-    // text will be displayed when no match found
-    emptyListText?: string;
+    // text or html will be rendered when no match found
+    emptyListView?: string;
 }
 
 /**
@@ -471,4 +544,12 @@ export interface ACRemoteConfiguration extends Configuration {
  */
 export interface ACLocalConfiguration extends Configuration {
     data: Array<any>;
+}
+
+/**
+ * We will use this object to store selected items
+ */
+export interface SelectedItem{
+    elem: any;// selected object
+    indexInFiltredItems: number;// keep track of it's index in filteredItems so we can return it to it's exact place
 }
