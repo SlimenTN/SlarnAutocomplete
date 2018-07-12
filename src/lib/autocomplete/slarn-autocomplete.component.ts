@@ -236,7 +236,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    */
   deleteFromSelectedItems(index: number){
       this._selectedItem.splice(index, 1);
-      this._selectedId.splice(index, 1);
+      (<Array<number | string>> this._selectedId).splice(index, 1);
 
       if(this._selectedItem.length == 0){
         this._selectedItem = null;
@@ -341,12 +341,17 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     /**
      * Triggered after a user select a suggestion
      * @param item selected item from the list
+     * @param index the index of the item in the filtered items
      */
-    performSelection(item) {
+    performSelection(item: any, index: number) {
         // console.log('selected item', item);
         if(this.configuration.multiple){
             if(this._selectedItem == null) this._selectedItem = [];
-            this._selectedItem.push(item);
+            let o = {elem: item, indexInFilteredList: index};
+            console.log('o', o);
+            this._selectedItem.push(o);
+            this.filteredItems.splice(index, 1);
+
             if(this._selectedId == null) this._selectedId = [];
             (<Array<number | string>> this._selectedId).push(item[this.configuration.key]);
             this.autocompleteInput.nativeElement.value = '';

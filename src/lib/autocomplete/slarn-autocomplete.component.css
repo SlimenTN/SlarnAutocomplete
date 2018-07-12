@@ -1,92 +1,94 @@
-.slarn-autocomplete-container{
-    border: solid 1px #cacaca;
-    /* height: 30px; */
-    padding-top: 3px;
-    padding-bottom: 3px;
-    padding-left: 3px;
-    margin: 0;
+.slarn-autocomplete-container {
+  border: solid 1px #cacaca;
+  /* height: 30px; */
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 3px;
+  margin: 0;
+  padding-right: 10px;
 }
 
-.slarn-autocomplete-container select{
-    display: none;
+.slarn-autocomplete-container select {
+  display: none;
 }
 
-.slarn-autocomplete-container input{
-    margin-bottom: 0;
-    display:table-cell;
-    width: 10px;
-    box-sizing : border-box;
-    border: none;
-    min-height: 25px;
+.slarn-autocomplete-container input {
+  margin-bottom: 0;
+  display: table-cell;
+  width: 10px;
+  box-sizing: border-box;
+  border: none;
+  min-height: 25px;
 }
 
-.slarn-autocomplete-container input:focus{
+.slarn-autocomplete-container input:focus {
   outline: none;
 }
 
-.slarn-autocomplete-container .selected-options{
-    font-size: 14px;
-    border: solid 1px #cacaca;
-    margin-right: 5px;
-    margin-bottom: 3px;
-    border-radius: 3px;
-    display: inline-block;
+.slarn-autocomplete-container .selected-options {
+  font-size: 14px;
+  border: solid 1px #cacaca;
+  margin-right: 5px;
+  margin-bottom: 3px;
+  border-radius: 3px;
+  display: inline-block;
 }
 
-.slarn-autocomplete-container .selected-options .text{
-    padding: 2px;
+.slarn-autocomplete-container .selected-options .text {
+  padding: 2px;
 }
 
-.slarn-autocomplete-container .selected-options .remove{
-    background: white;
-    border-right: none;
-    border-top: none;
-    border-bottom: none;
-    border-left: solid 1px #cacaca;
-    cursor: pointer;
-    padding-left: 3px;
-    padding-right: 3px;
+.slarn-autocomplete-container .selected-options .remove {
+  background: white;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+  border-left: solid 1px #cacaca;
+  cursor: pointer;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
-.slarn-autocomplete-container .selected-options .remove:hover{
-    background-color: #ececec;
+.slarn-autocomplete-container .selected-options .remove:hover {
+  background-color: #ececec;
 }
 
-.slarn-autocomplete-container .suggestions{
-    border: solid 1px #cacaca;
-    position: absolute;
-    width: 100%;
-    background: white;
-    z-index: 2;
-    display: block;
-    max-height: 200px;
-    overflow-y: auto;
-    left: -1px;
+.slarn-autocomplete-container .suggestions {
+  border: solid 1px #cacaca;
+  position: absolute;
+  width: 100%;
+  background: white;
+  z-index: 2;
+  display: block;
+  max-height: 200px;
+  overflow-y: auto;
+  left: -1px;
 }
 
-.slarn-autocomplete-container .no-match-found,.loading-data{
-    padding: 5px;
+.slarn-autocomplete-container .no-match-found, .loading-data {
+  padding: 5px;
 }
 
-.slarn-autocomplete-container .toggle-suggestions-display{
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiBwcLEx22EzYqAAAAW0lEQVQoz2NgGAyAm2EFgxBWGRGG1QysTAxfGZ4z7MGiRIRhH8Mdht8QTj/DOTQlwgwXGdqRBVCVCDNcQJVGVSLEcB5TGqEEpzRMyTnc0gwMDAytDPV0DWSiAAC0ghX2P8wBMwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOC0wNy0wN1QxMToxOToyOSswMjowMHRLTC0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTgtMDctMDdUMTE6MTk6MjkrMDI6MDAFFvSRAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAABJRU5ErkJggg==');
-    background-repeat: no-repeat;
-    background-position: center center;
-    cursor: pointer;
-    width: 30px;
+.slarn-autocomplete-container .toggle-suggestions-display {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiBwcLEx22EzYqAAAAW0lEQVQoz2NgGAyAm2EFgxBWGRGG1QysTAxfGZ4z7MGiRIRhH8Mdht8QTj/DOTQlwgwXGdqRBVCVCDNcQJVGVSLEcB5TGqEEpzRMyTnc0gwMDAytDPV0DWSiAAC0ghX2P8wBMwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOC0wNy0wN1QxMToxOToyOSswMjowMHRLTC0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTgtMDctMDdUMTE6MTk6MjkrMDI6MDAFFvSRAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAABJRU5ErkJggg==');
+  background-repeat: no-repeat;
+  background-position: center center;
+  cursor: pointer;
+  width: 30px;
 }
 
-.slarn-autocomplete-container .toggle-suggestions-display{
-    border-left: solid 1px #cacaca;
-    border-bottom: none;
-    border-right: none;
-    border-top: none;
-    background-color: white;
+.slarn-autocomplete-container .toggle-suggestions-display {
+  border-left: solid 1px #cacaca;
+  border-bottom: none;
+  border-right: none;
+  border-top: none;
+  background-color: white;
 }
-.slarn-autocomplete-container .toggle-suggestions-display:hover{
-    background-color: #ececec;
+
+.slarn-autocomplete-container .toggle-suggestions-display:hover {
+  background-color: #ececec;
 }
