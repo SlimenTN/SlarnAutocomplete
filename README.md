@@ -1,7 +1,9 @@
 # SlarnAutocomplate
-An angular package for a very simple yet powerfull autocomplete component
+An angular package for a very simple yet powerful autocomplete component
 
-![slarn-autocomplete preview](doc/ex.png)
+Simple selection             |  Multiple selection
+:-------------------------:|:-------------------------:
+![slarn-autocomplete preview](doc/basic.png)  |  ![slarn-autocomplete preview](doc/multiple.png)
 
 # Demo
 You can find a live demo [here](https://angular-kejswy.stackblitz.io/)
@@ -17,7 +19,7 @@ import { SlarnAutocompleteModule } from 'slarn-autocomplete';
     AppComponent
   ],
   imports: [
-    BrowserModule, SlarnAutocompleteModule,
+    BrowserModule, SlarnAutocompleteModule
   ],
   providers: [],
   bootstrap: [AppComponent]
@@ -25,23 +27,28 @@ import { SlarnAutocompleteModule } from 'slarn-autocomplete';
 export class AppModule { }
 ```
 3.Now call the component in your template <br>
-`<slarn-autocomplete [configurtion]="myConfig" (onItemSelected)="doSomething($event)"></slarn-automplete>`
+```html
+<slarn-autocomplete 
+  [configurtion]="myConfig" 
+  (onItemSelected)="doSomething($event)">
+</slarn-automplete>
+```
 
 # Usage
-*SlarnAutocomplete* works on two modes:<br>
+**SlarnAutocomplete** works on two modes:<br>
 1. Locally: Filter through explicitly given array of objects
-2. Remotely: You just give the url of your api and the autocomplete send a get request to this url with a specific param called `ac-reg` that contains the word written in the autocomplete's input (which means you need to create a function in your api that get the autocomple param and return an array of objects)
+2. Remotely: You just give the url of your api and the autocomplete send a `GET` request to this url with a specific param called `ac-reg` that contains the word written in the autocomplete (which means you need to create a function in your api that get the autocomplete param and return an array of objects)
 
 And in both cases you need to provide a configuration object to the autocomplete.
 
 # How to configure the autocomplete
-Since *SlarnAutocomplete* works on two modes we need to provide a configuration for each one `ACLocalConfiguration` or `ACRemoteConfiguration`
+Since **SlarnAutocomplete** works on two modes we need to provide a configuration for each one `ACLocalConfiguration` or `ACRemoteConfiguration`
 
 ## Working locally
 In `app.component.ts`:<br>
 
 ```javascript
-slarn_local_configuration: ACLocalConfiguration = {
+slarn_local_config: ACLocalConfiguration = {
     template: `
       <div><strong>#name#</strong></div>
       <div>#description#</div>
@@ -99,7 +106,8 @@ In `app.component.html`:
 *SlarnAutocomplete* provides a selection event that will be triggered whenever you select an option or clear the autocomplete's input:
 ```html
 <slarn-autocomplete 
-    [configuration]="myConfig" (onItemSelected)="doSomething($event)">
+    [configuration]="myConfig" 
+    (onItemSelected)="doSomething($event)">
 </slarn-autocomplete>
 ```
 The selected item will be the full object:
@@ -109,12 +117,16 @@ doSomething(item: any){
 }
 ```
 # Setting an item
-To pre-select an item you just need to provide it's key to the autocomplete:
+To pre-select an item you just need to provide it's key (or an array of keys in case of multiple selection) to the autocomplete:
 ```html
 <slarn-autocomplete [selectedId]="mySelectedObject.id"></slarn-autocomplete>
 ```
+or
+```html
+<slarn-autocomplete [selectedId]="[1,2]"></slarn-autocomplete>
+```
 of course it's based on the key you already gave in the configuration.<br>
-If the autocomplete is inside a form then you don't need to use `selectedId` input you jsut need to fill the `formControl`
+If the autocomplete is inside a form then you don't need to use `selectedId` input you just need to fill the `formControl` or bind it an `ngModel`
 ```html
 <slarn-autocomplete formControlName="ac_control"></slarn-autocomplete>
 ```
@@ -122,20 +134,25 @@ in app.component.ts:
 ```javascript
 form.get('ac_control').setValue('myKeyValue');
 ```
+or using `ngModel`
+```html
+<slarn-autocomplete [(ngModel)]="myAttribute"></slarn-autocomplete>
+```
 
 # Available configuration
 
 | Name          | Details|Status|
 |---------------|--------|------|
-|tempalte       |The html view that you want to be displayed to the user, awesome right :)| Required
-|key | Will be stored in the autocomplete (will be used to select an option or when sending a form)|Required
-|value| Will be displayed in the autocomplete's input|Required
-|input.name|Set a specific name to the input (in case you work with forms and you want a specific name)|Optional
-|input.placeHolder|Place holder of the autocomplete|Optional
-|loadingText|The text that will be displayed while loading data remotely (you can set a html view)|Optional (default text: `Loading data...`)
-|emptyListText|The text that will be displayed when no match found|Optional (default text: `No match found!`)
-|data|Contains an array of objects|Required for *Local configuration*
-|url|Contains the url of the api |Required for *Remote configuration*
+|template: `string`       |The html view that you want to be displayed to the user, awesome right :)| Optional
+|key: `string` | Will be stored in the autocomplete (will be used to select an option or when sending a form)|Required
+|value: `string`| Will be displayed in the autocomplete|Required
+|multiple: `boolean`|switch between simple or multiple selection|Optional
+|name: `string`|Set a specific name to the input (in case you work with forms and you want a specific name)|Optional
+|placeHolder: `string`|Place holder of the autocomplete|Optional
+|loadingView: `string`|The text or the html view that will be rendered while loading data remotely|Optional (default text: `Loading data...`)
+|emptyListView: `boolean`|The text or the html view that will be rendered when no match found|Optional (default text: `No match found!`)
+|data: `Array<any>`|Contains an array of objects|Required for *Local configuration*
+|url: `string`|Contains the url to the api |Required for *Remote configuration*
 
 # LICENSE
 This project is under MIT License 
