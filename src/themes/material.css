@@ -1,0 +1,22 @@
+.slarn-autocomplete-container{
+    border-top: none ;
+    border-left: none ;
+    border-right: none ;
+    border-bottom: solid 2px #cacaca ;
+    -webkit-transition : border 200ms ease-out;
+    -moz-transition : border 200ms ease-out;
+    -o-transition : border 200ms ease-out;
+    transition : border 200ms ease-out;
+}
+
+.slarn-autocomplete-container .toggle-suggestions-display {
+    border: none ;
+}
+
+.slarn-autocomplete-container:focus-within{
+    border-bottom: solid 2px #3f51b5;
+}
+
+.slarn-autocomplete-container .suggestions{
+    margin-top: 5px;
+}

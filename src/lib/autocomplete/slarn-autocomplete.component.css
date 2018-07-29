@@ -1,5 +1,5 @@
 .slarn-autocomplete-container {
-  border: solid 1px #cacaca;
+  /* border: solid 1px #cacaca; */
   /* height: 30px; */
   padding-top: 3px;
   padding-bottom: 3px;
@@ -36,6 +36,7 @@
 
 .slarn-autocomplete-container .selected-options .text {
   padding: 2px;
+  cursor: default;
 }
 
 .slarn-autocomplete-container .selected-options .remove {
@@ -79,13 +80,10 @@
   background-position: center center;
   cursor: pointer;
   width: 30px;
-}
-
-.slarn-autocomplete-container .toggle-suggestions-display {
-  border-left: solid 1px #cacaca;
+  /* border-left: solid 1px #cacaca;
   border-bottom: none;
   border-right: none;
-  border-top: none;
+  border-top: none; */
   background-color: white;
 }
 
