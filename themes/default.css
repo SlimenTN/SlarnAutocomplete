@@ -1,0 +1,26 @@
+.slarn-autocomplete-container{
+    border: solid 1px;
+    border-color: #cacaca;
+}
+
+.slarn-autocomplete-container .toggle-suggestions-display {
+    top: 0;
+    border-left: solid 1px #cacaca;
+    border-bottom: none;
+    border-right: none;
+    border-top: none;
+}
+
+.slarn-autocomplete-container .selected-options {
+  border: solid 1px #cacaca;
+  border-radius: 3px;
+}
+
+.slarn-autocomplete-container .selected-options .remove {
+  background: white;
+  border-left: solid 1px #cacaca;
+}
+
+.slarn-autocomplete-container .suggestions {
+  border: solid 1px #cacaca;
+}

@@ -1,0 +1,41 @@
+.slarn-autocomplete-container{
+  border: 0;
+  background: white no-repeat;
+  background-image: linear-gradient(to bottom, #1A237E, #1A237E), linear-gradient(to bottom, silver, silver);
+  /* sizes for the 2 images (default state) */
+  background-size: 0 2px, 100% 1px;
+  /* positions for the 2 images. Change both "50%" to "0%" or "100%" and tri again */
+  background-position: 50% 100%, 50% 100%;
+
+  /* animation solely on background-size */
+  transition: background-size 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
+}
+
+.slarn-autocomplete-container .toggle-suggestions-display {
+    top: -2px;
+    border: none ;
+}
+
+.slarn-autocomplete-container:focus-within{
+    /*border-bottom: solid 2px #3f51b5;*/
+  background-size: 100% 2px, 100% 1px;
+  outline: none;
+}
+
+.slarn-autocomplete-container .suggestions{
+    margin-top: 5px;
+}
+
+.slarn-autocomplete-container .selected-options {
+  background: #ececec;
+  border-radius: 50px;
+  padding: 5px;
+}
+
+.slarn-autocomplete-container .selected-options .remove {
+  border-radius: 50%;
+}
+
+.slarn-autocomplete-container .suggestions {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}

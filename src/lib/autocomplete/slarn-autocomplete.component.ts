@@ -53,7 +53,9 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     @Input('configuration') configuration: ACLocalConfiguration | ACRemoteConfiguration;
     @Output('onItemSelected') onItemSelected: EventEmitter<any> = new EventEmitter();
 
-    constructor(private _service: ACService) { }
+    constructor(private _service: ACService) {
+      // require('style-loader!./../../themes/default.css');
+    }
 
     @Input()
     set selectedId(value: number | string | Array<number | string>) {
@@ -480,7 +482,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         .sg {
             padding: 5px;
             cursor: default;
-            border-bottom: solid 1px #f1eeee
+            /*border-bottom: solid 1px #f1eeee*/
         }
 
         .sg:hover {
@@ -521,7 +523,10 @@ export interface Configuration {
     // name will be giving to the input
     name?: string
 
-    // placeholder of the input
+    /**
+     * placeholder of the input
+     * @deprecated
+     */
     placeHolder?: string;
 
     // allow multiple selection (default: false)
