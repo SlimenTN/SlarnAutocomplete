@@ -29,12 +29,16 @@ export class AutoGrowDirective{
       tmp.style.cssText = input.currentStyle.cssText;
     tmp.style.width = '';
     tmp.style.position = 'absolute';
-    tmp.innerHTML = input.value.replace(/&/g, "&amp;")
+
+    tmp.innerHTML = input.value
+      .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;")
-      .replace(/ /g, '&nbsp;');
+      .replace(/ /g, '&nbsp;')
+    ;
+
     input.parentNode.appendChild(tmp);
     let width = tmp.clientWidth+pad_right+1;
     tmp.parentNode.removeChild(tmp);

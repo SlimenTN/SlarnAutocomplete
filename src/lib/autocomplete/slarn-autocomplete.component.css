@@ -2,7 +2,7 @@
   /* border: solid 1px #cacaca; */
   /* height: 30px; */
   padding-top: 3px;
-  padding-bottom: 3px;
+  /*padding-bottom: 3px;*/
   padding-left: 3px;
   margin: 0;
   padding-right: 10px;
@@ -13,7 +13,7 @@
 }
 
 .slarn-autocomplete-container input {
-  margin-bottom: 0;
+  margin-bottom: 2px;
   display: table-cell;
   width: 10px;
   box-sizing: border-box;
@@ -42,7 +42,7 @@
   border-top: none;
   border-bottom: none;
   cursor: pointer;
-  padding-left: 3px;
+  padding-left: 10px;
   padding-right: 3px;
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAW0lEQVR4AWMYWUCAGmr4gfgeEPfjUdMPVcNPyLB2IP6Pw7B+qFw7bu2ENbSji5FqWAMQN8JdSSaYBjKAIkMQrkIYRKkhjQS9RnlgUx79jdRMkLzUyCKCDCMHAABoYiU8YS3zcAAAAABJRU5ErkJggg==');
   background-repeat: no-repeat;
@@ -50,7 +50,7 @@
 }
 
 .slarn-autocomplete-container .selected-options .remove:hover {
-  background-color: #ececec;
+  /*background-color: #ececec;*/
 }
 
 .slarn-autocomplete-container .suggestions {
@@ -62,7 +62,7 @@
   max-height: 200px;
   overflow-y: auto;
   left: -1px;
-  margin-top: 3px;
+  /*margin-top: 1px;*/
 }
 
 .slarn-autocomplete-container .no-match-found, .loading-data {
