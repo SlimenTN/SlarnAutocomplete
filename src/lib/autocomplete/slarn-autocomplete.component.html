@@ -18,7 +18,7 @@
     <!-- When autocomplete is multiple _selectedItems will be displayed here -->
     <ng-container *ngIf="configuration.multiple && _selectedItem != null">
         <span class="selected-options" *ngFor="let si of _selectedItem; let o = index;">
-            <span class="text" *ngIf="si.elem != undefined">{{si.elem[configuration.value]}}</span> <span class="remove" (click)="deleteFromSelectedItems(o, si)">x</span>
+            <span class="text" *ngIf="si.elem != undefined">{{si.elem[configuration.value]}}</span> <span class="remove" (click)="deleteFromSelectedItems(o, si)">&nbsp;</span>
         </span>
     </ng-container>
 
@@ -37,7 +37,7 @@
 
     <div class="suggestions" [style.display]="(displaySuggestions) ? 'block' : 'none'">
         <!-- Suggestions list  -->
-        <slarn-ac-suggestion *ngFor="let e of filteredItems; let i = index;" [item]="e" (onSuggestionClicked)="performSelection($event, i)">
+        <slarn-ac-suggestion #acsuggestion *ngFor="let e of filteredItems; let i = index;" [item]="e" (onSuggestionClicked)="performSelection($event, i)">
             <div [innerHTML]="buildView(e)"></div>
         </slarn-ac-suggestion>
 

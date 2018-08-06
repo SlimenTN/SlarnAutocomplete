@@ -22,10 +22,6 @@
   outline: none;
 }
 
-.slarn-autocomplete-container .suggestions{
-    margin-top: 5px;
-}
-
 .slarn-autocomplete-container .selected-options {
   background: #ececec;
   border-radius: 50px;

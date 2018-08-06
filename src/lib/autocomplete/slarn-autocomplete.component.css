@@ -44,6 +44,9 @@
   cursor: pointer;
   padding-left: 3px;
   padding-right: 3px;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAW0lEQVR4AWMYWUCAGmr4gfgeEPfjUdMPVcNPyLB2IP6Pw7B+qFw7bu2ENbSji5FqWAMQN8JdSSaYBjKAIkMQrkIYRKkhjQS9RnlgUx79jdRMkLzUyCKCDCMHAABoYiU8YS3zcAAAAABJRU5ErkJggg==');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .slarn-autocomplete-container .selected-options .remove:hover {
@@ -59,6 +62,7 @@
   max-height: 200px;
   overflow-y: auto;
   left: -1px;
+  margin-top: 3px;
 }
 
 .slarn-autocomplete-container .no-match-found, .loading-data {
