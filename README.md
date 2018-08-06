@@ -12,7 +12,7 @@ Simple selection            |  Multiple selection
 ![slarn-autocomplete preview](doc/material-single.png)  |  ![slarn-autocomplete preview](doc/material-multiple.png)
 
 # Demo
-You can find a live demo [here](https://angular-kejswy.stackblitz.io/)
+You can find a live demo [here](https://slarn-autocomplete.stackblitz.io/)
 
 # Installation
 1. Run inside your terminal `npm i slarn-autocomplete`<br>
