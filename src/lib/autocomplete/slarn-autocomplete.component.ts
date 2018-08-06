@@ -299,15 +299,15 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    *
    */
   private clearAllSelections(){
-    this.suggestions.forEach((sg: SlarnAutocompleteSuggestionComponent, index: number, array: T[]) => {
+    this.suggestions.forEach((sg: SlarnAutocompleteSuggestionComponent, index: number, array) => {
         sg.focusSuggestion = false;
     });
   }
 
   /**
    * Delete item from selected list and dispatch changes
-   * @param {number} indexInSelectedItems
-   * @param {SelectedItem} si
+   * @param indexInSelectedItems
+   * @param si
    */
   deleteFromSelectedItems(indexInSelectedItems: number, si: SelectedItem) {
     this._selectedItem.splice(indexInSelectedItems, 1);
@@ -345,7 +345,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   /**
    * Check if pressed key is a navigation key
    * @param $event
-   * @returns {boolean}
+   * @returns
    */
   private navigationKey($event): boolean {
     return (this._keys.navigationKeys.indexOf($event.which) > -1)

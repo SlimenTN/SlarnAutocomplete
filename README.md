@@ -1,11 +1,13 @@
 # SlarnAutocomplate
 An angular package for a very simple yet powerful autocomplete component
 
-Simple selection (Default design)            |  Multiple selection (Default design)
+## Default theme
+Simple selection           |  Multiple selection 
 :-------------------------:|:-------------------------:
 ![slarn-autocomplete preview](doc/basic.png)  |  ![slarn-autocomplete preview](doc/multiple.png)
 
-Simple selection (Material design)            |  Multiple selection (Material design)
+## Material design theme
+Simple selection            |  Multiple selection
 :-------------------------:|:-------------------------:
 ![slarn-autocomplete preview](doc/material-single.png)  |  ![slarn-autocomplete preview](doc/material-multiple.png)
 
@@ -38,8 +40,8 @@ export class AppModule { }
 /*Import default theme*/
 @import '~slarn-autocomplete/themes/default.css';
 ```
-##### In case of chosing material design theme:
-If you want to change the default bottom border color and animation copy/paste this in the `style.css` file and changes the colors as you want:
+##### In case of choosing material design theme:
+If you want to change the default bottom border color and animation copy/paste this in the `style.css` file and change the colors as you want:
 ```css
 .slarn-autocomplete-container{
   background-image:
