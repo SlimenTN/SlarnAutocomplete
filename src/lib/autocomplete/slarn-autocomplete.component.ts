@@ -162,7 +162,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    */
   private initConfiguration() {
     // if (!this.configuration.emptyListView) this.configuration.emptyListView = 'No match found!';
-    if (!this.configuration.loadingView) this.configuration.loadingView = 'Loading data...';
+    if (!(<ACRemoteConfiguration> this.configuration).loadingView) (<ACRemoteConfiguration> this.configuration).loadingView = 'Loading data...';
     if (!this.configuration.multiple) this.configuration.multiple = false;
     if (!this.configuration.template) this.configuration.template = '<div>#' + this.configuration.value + '#</div>';
     if (!(<ACRemoteConfiguration> this.configuration).minCharacters) (<ACRemoteConfiguration> this.configuration).minCharacters = 1;
