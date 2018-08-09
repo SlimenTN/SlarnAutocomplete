@@ -1,56 +1,59 @@
 <div #container class="slarn-autocomplete-container" style="position: relative;">
-    <!-- Hidden select will contain the key of the selected item -->
-    <select
-        [attr.name]="(configuration.name) ? configuration.name : null"
-        [attr.multiple]="(configuration.multiple) ? 'multiple' : null">
-        <ng-container *ngIf="configuration.multiple && _selectedItem != null">
-            <option *ngFor="let item of _selectedItem" [value]="item[configuration.key]" selected>
-                {{item[configuration.key]}}
-            </option>
-        </ng-container>
-        <ng-container *ngIf="!configuration.multiple">
-            <option [value]="(_selectedItem) ? _selectedItem[configuration.key] : ''" selected>
-                {{(_selectedItem) ? _selectedItem[configuration.value] : '' }}
-            </option>
-        </ng-container>
-    </select>
-
-    <!-- When autocomplete is multiple _selectedItems will be displayed here -->
+  <!-- Hidden select will contain the key of the selected item -->
+  <select
+    [attr.name]="(configuration.name) ? configuration.name : null"
+    [attr.multiple]="(configuration.multiple) ? 'multiple' : null">
     <ng-container *ngIf="configuration.multiple && _selectedItem != null">
-        <span class="selected-options" *ngFor="let si of _selectedItem; let o = index;">
-            <span class="text" *ngIf="si.elem != undefined">{{si.elem[configuration.value]}}</span> <span class="remove" (click)="deleteFromSelectedItems(o, si)">&nbsp;</span>
-        </span>
+      <option *ngFor="let item of _selectedItem" [value]="item[configuration.key]" selected>
+        {{item[configuration.key]}}
+      </option>
     </ng-container>
+    <ng-container *ngIf="!configuration.multiple">
+      <option [value]="(_selectedItem) ? _selectedItem[configuration.key] : ''" selected>
+        {{(_selectedItem) ? _selectedItem[configuration.value] : '' }}
+      </option>
+    </ng-container>
+  </select>
 
-    <!-- Autocomplete input will be visible to the user and contain the value -->
-    <input #autocompleteInput id="ac" type="text" autocomplete="off" autoGrow [activated]="configuration.multiple"
-        [style.width]="(configuration.multiple) ? '10px' : '100%'"
-        (keyup)="onKeyup($event)" (keydown)="onKeyDown($event)"
-        [attr.value]="(!configuration.multiple && _selectedItem != null) ? _selectedItem[configuration.value] : null"
-        [attr.placeHolder]="(configuration.placeHolder) ? configuration.placeHolder : null">
-    <span #spanX style="display: none;"></span>
-    <!-- Display all button -->
-    <button #displayAllBtn
-        class="toggle-suggestions-display"
-        (click)="toggleDisplaySuggestions()">
-    </button>
+  <!-- When autocomplete is multiple _selectedItems will be displayed here -->
+  <ng-container *ngIf="configuration.multiple && _selectedItem != null">
+        <span class="selected-options" *ngFor="let si of _selectedItem; let o = index;">
+            <span class="text" *ngIf="si.elem != undefined">{{si.elem[configuration.value]}}</span> <span class="remove"
+                                                                                                          (click)="deleteFromSelectedItems(o, si)">&nbsp;</span>
+        </span>
+  </ng-container>
 
-    <div class="suggestions" [style.display]="(displaySuggestions) ? 'block' : 'none'">
-        <!-- Suggestions list  -->
-        <slarn-ac-suggestion #acsuggestion *ngFor="let e of filteredItems; let i = index;" [item]="e" (onSuggestionClicked)="performSelection($event, i)">
-            <div [innerHTML]="buildView(e)"></div>
-        </slarn-ac-suggestion>
+  <!-- Autocomplete input will be visible to the user and contain the value -->
+  <input #autocompleteInput id="ac" type="text" autocomplete="off" autoGrow [activated]="configuration.multiple"
+         [style.width]="(configuration.multiple) ? '10px' : '100%'"
+         (keyup)="onKeyup($event)" (keydown)="onKeyDown($event)"
+         [attr.value]="(!configuration.multiple && _selectedItem != null) ? _selectedItem[configuration.value] : null">
+  <span #spanX style="display: none;"></span>
+  <!-- Display all button -->
+  <button #displayAllBtn
+          class="toggle-suggestions-display"
+          (click)="toggleDisplaySuggestions()">
+  </button>
 
-        <!-- Displayed when no match found -->
-        <div *ngIf="filteredItems != null && filteredItems.length == 0 && !loadingData"
-            class="no-match-found"
-            [innerHTML]="configuration.emptyListView">
-        </div>
+  <div class="suggestions" [style.display]="(displaySuggestions) ? 'block' : 'none'">
+    <!-- Suggestions list  -->
+    <slarn-ac-suggestion #acsuggestion *ngFor="let e of filteredItems; let i = index;" [item]="e"
+                         (onSuggestionClicked)="performSelection($event, i)">
+      <div [innerHTML]="buildView(e) | safeHtml"></div>
+    </slarn-ac-suggestion>
 
-        <!--  Displayed when loading data from api -->
-        <div *ngIf="loadingData"
-            class="loading-data"
-            [innerHTML]="configuration.loadingView">
-        </div>
+    <!-- Displayed when no match found -->
+    <div #emptyResult *ngIf="filteredItems != null && filteredItems.length == 0 && !loadingData"
+         class="no-match-found">
+          <ng-content select=".empty-result-view"></ng-content>
+          <ng-container *ngIf="emptyResult.children.length == 0">No match found!</ng-container>
     </div>
+
+    <!--  Displayed when loading data from api -->
+    <div *ngIf="loadingData"
+         class="loading-data"
+         [innerHTML]="configuration.loadingView | safeHtml">
+    </div>
+
+  </div>
 </div>

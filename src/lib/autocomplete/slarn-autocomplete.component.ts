@@ -151,18 +151,9 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    */
   toggleDisplaySuggestions() {
     if (!this.displaySuggestions) {
-      this.displaySuggestions = true;
-      if ((<ACLocalConfiguration> this.configuration).data) {// if it's local configuration
-
-        this.searchLocally('', (<ACLocalConfiguration> this.configuration).data);
-
-      } else if ((<ACRemoteConfiguration> this.configuration).url) {// if it's remote configuration
-
-        this.searchRemotely('', (<ACRemoteConfiguration> this.configuration).url);
-
-      }
+      this.openSuggestions();
     } else {
-      this.displaySuggestions = false;
+      this.closeSuggestions();
     }
   }
 
@@ -170,10 +161,11 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    * Init default configuration
    */
   private initConfiguration() {
-    if (!this.configuration.emptyListView) this.configuration.emptyListView = 'No match found!';
+    // if (!this.configuration.emptyListView) this.configuration.emptyListView = 'No match found!';
     if (!this.configuration.loadingView) this.configuration.loadingView = 'Loading data...';
     if (!this.configuration.multiple) this.configuration.multiple = false;
     if (!this.configuration.template) this.configuration.template = '<div>#' + this.configuration.value + '#</div>';
+    if (!(<ACRemoteConfiguration> this.configuration).minCharacters) (<ACRemoteConfiguration> this.configuration).minCharacters = 1;
   }
 
   /**
@@ -246,22 +238,24 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
           this.dispatchData();
         }
       } else {
-        this.displaySuggestions = true;
-        if ((<ACLocalConfiguration> this.configuration).data) {// if it's local configuration
 
+        if ((<ACLocalConfiguration> this.configuration).data) {// if it's local configuration
+          this.displaySuggestions = true;
           this.searchLocally(reg, (<ACLocalConfiguration> this.configuration).data);
 
         } else if ((<ACRemoteConfiguration> this.configuration).url) {// if it's remote configuration
           // when working remotely and for better user experience
           // the searchRemotely function will be fired when user finish typing
           // and we assume that finishing typing means not pressing key for like 250ms
-          this.loadingData = true;
-          this.filteredItems = [];
-          if (this.typingTimer != null) clearTimeout(this.typingTimer);
-          this.typingTimer = setTimeout(() => {
-            this.searchRemotely(reg, (<ACRemoteConfiguration> this.configuration).url);
-          }, this.doneTypingInterval);
-
+          if((<ACRemoteConfiguration> this.configuration).minCharacters == reg.length){// make sure to call api after typing the need number of characters
+            this.displaySuggestions = true;
+            this.loadingData = true;
+            this.filteredItems = [];
+            if (this.typingTimer != null) clearTimeout(this.typingTimer);
+            this.typingTimer = setTimeout(() => {
+              this.searchRemotely(reg, (<ACRemoteConfiguration> this.configuration).url);
+            }, this.doneTypingInterval);
+          }
         }
       }
     } else if (this.navigationKey($event)) {
@@ -514,6 +508,71 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
       this.searchAndSelectItemFromKey();
     }
   }
+
+  //======================================================================
+  //        FUNCTIONS FOR EXTERNAL USAGE
+  //======================================================================
+  /**
+   * Open suggestions list
+   */
+  openSuggestions(){
+    if(!this.displaySuggestions){
+      this.displaySuggestions = true;
+      if ((<ACLocalConfiguration> this.configuration).data) {// if it's local configuration
+
+        this.searchLocally('', (<ACLocalConfiguration> this.configuration).data);
+
+      } else if ((<ACRemoteConfiguration> this.configuration).url) {// if it's remote configuration
+
+        this.searchRemotely('', (<ACRemoteConfiguration> this.configuration).url);
+
+      }
+    }
+  }
+
+  /**
+   * Close suggestions list
+   */
+  closeSuggestions(){
+    this.displaySuggestions = false;
+  }
+
+  /**
+   * Add new item to data
+   * If there is another item with the same "key" value then the it will not be added
+   * @param item
+   * @param selectIt boolean: select the item after adding if true (false by default)
+   */
+  appendItem(item: any, selectIt: boolean){
+    if ((<ACLocalConfiguration> this.configuration).data) {
+      selectIt = selectIt || false;
+      let i =this.findItem((<ACLocalConfiguration> this.configuration).data, item);
+      if(i == undefined){
+        (<ACLocalConfiguration> this.configuration).data.push(item);
+        if(selectIt) this.performSelection(item, (<ACLocalConfiguration> this.configuration).data.length-1);
+      }else{
+        throw new Error('An item with the same "key" value already exist in the "data" array: '+JSON.stringify(i)+'\n' +
+          'Unable to append the item '+JSON.stringify(item));
+      }
+
+    }else{
+      throw new Error('"appendItem()" function is for local configuration only\n ' +
+        'If you are using an API (remote configuration) and you add a new object to it ' +
+        'then this new object will be available when you start typing in the autocomplete.');
+    }
+  }
+
+  /**
+   * Find if item already exist in data
+   * @param data
+   * @param item
+   * @returns
+   */
+  private findItem(data: Array<any>, item: any){
+    return data.find(elem => {
+      return (elem[this.configuration.key] == item[this.configuration.key]);
+    });
+  }
 }
 
 
@@ -573,28 +632,28 @@ export interface Configuration {
   // name will be giving to the input
   name?: string
 
-  /**
-   * placeholder of the input
-   * @deprecated
-   */
-  placeHolder?: string;
-
   // allow multiple selection (default: false)
   multiple?: boolean;
-
-  // text or html will be rendered when loading data remotely
-  loadingView?: string;
-
-  // text or html will be rendered when no match found
-  emptyListView?: string;
 }
 
 /**
  * Remote configuration used when you want to work remotely with an api
  */
 export interface ACRemoteConfiguration extends Configuration {
-  // URL of the API
+  /**
+   * URL to the API
+   */
   url: string;
+
+  /**
+   * number of characters needed before calling api
+   */
+  minCharacters?: number;
+
+  /**
+   * text or html will be rendered when loading data remotely
+   */
+  loadingView?: string;
 }
 
 /**

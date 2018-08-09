@@ -165,8 +165,9 @@ or using `ngModel`
 <slarn-autocomplete [(ngModel)]="myAttribute"></slarn-autocomplete>
 ```
 
-# Available configuration
-
+# API
+## Configuration
+### Common configuration
 | Name          | Details|Status|
 |---------------|--------|------|
 |template: `string`       |The html view that you want to be displayed to the user, awesome right :)| Optional
@@ -174,11 +175,51 @@ or using `ngModel`
 |value: `string`| Will be displayed in the autocomplete|Required
 |multiple: `boolean`|switch between simple or multiple selection|Optional
 |name: `string`|Set a specific name to the input (in case you work with forms and you want a specific name)|Optional
-|placeHolder: `string`|Place holder of the autocomplete|Optional
-|loadingView: `string`|The text or the html view that will be rendered while loading data remotely|Optional (default text: `Loading data...`)
-|emptyListView: `boolean`|The text or the html view that will be rendered when no match found|Optional (default text: `No match found!`)
-|data: `Array<any>`|Contains an array of objects|Required for *Local configuration*
-|url: `string`|Contains the url to the api |Required for *Remote configuration*
+|~~placeHolder~~: `string` (no longer available)|Place holder of the autocomplete|Optional
+|~~emptyListView~~: `boolean` (no longer available in the configuration but replaced by `ng-container`)|The text or the html view that will be rendered when no match found|Optional (default text: `No match found!`)
 
+### Local configuration
+| Name          | Details|Status|
+|---------------|--------|------|
+|data: `Array<any>`|Contains an array of objects|Required
+
+### Remote configuration
+| Name          | Details|Status|
+|---------------|--------|------|
+|url: `string`|Contains the url to the api |Required
+|minCharacters: `number`|minimal number of characters typed before calling the `api` |Optional
+|loadingView: `string`|The text or the html view that will be rendered while loading data remotely|Optional (default text: `Loading data...`)
+
+### Render `emptyListView`
+When there is no data found after typing, **SlarnAutocomplete** will render `No match found!` text .<br>
+But if you want to render a template of your own you can use `ng-container` inside `slarn-autocomplete` with `empty-result-view` class:
+```html
+<slarn-autocomplete
+  #firstAutocomplete
+  [configuration]="local_config"
+  (onItemSelected)="selected_locally = $event">
+  <ng-container class="empty-result-view">
+    <div style="text-align: center">
+      <strong>We can't find what you're looking for!</strong><br>
+      <!--As you can see you can render buttons and do some stuff-->
+      <!--Of course you need to create the 'addItem()' function in your component-->
+      <button (click)="addItem()">Add this new item</button>
+    </div>
+  </ng-container>
+</slarn-autocomplete>
+```
+## Inputs and Outputs
+| Name          | Details|Status|
+|---------------|--------|------|
+|`@Input`<br>configuration| Contains your custom configuration of the autocomplete| Required
+|`@Input`<br>selectedId| Contains one or more id of the items that you want to be selected|
+|`@Output`<br>onItemSelected| Event will be fired after selecting an item (`$event` will be the selected item)
+
+## Functions
+| Name          | Details|
+|---------------|--------|
+|openSuggestions()| Open the list of suggestions
+|closeSuggestions()| Close the list of suggestions
+|appendItem(`item`: any, `selectIt`: boolean)<br>`item`: the item that you want to add it<br> `selectIt`: set it to true if you want to select this item after adding it (false by default)| Add items dynamically to the autocomplete **(works only with local configuration)**
 # LICENSE
 This project is under MIT License 
