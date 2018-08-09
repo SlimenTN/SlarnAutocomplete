@@ -39,7 +39,7 @@
     <!-- Suggestions list  -->
     <slarn-ac-suggestion #acsuggestion *ngFor="let e of filteredItems; let i = index;" [item]="e"
                          (onSuggestionClicked)="performSelection($event, i)">
-      <div [innerHTML]="buildView(e) | safeHtml"></div>
+      <div [innerHTML]="buildView(e) | renderSafely"></div>
     </slarn-ac-suggestion>
 
     <!-- Displayed when no match found -->
@@ -50,10 +50,11 @@
     </div>
 
     <!--  Displayed when loading data from api -->
-    <div *ngIf="loadingData"
-         class="loading-data"
-         [innerHTML]="configuration.loadingView | safeHtml">
-    </div>
-
+    <ng-container *ngIf="configuration.loadingView">
+      <div *ngIf="loadingData"
+           class="loading-data"
+           [innerHTML]="configuration.loadingView | renderSafely">
+      </div>
+    </ng-container>
   </div>
 </div>

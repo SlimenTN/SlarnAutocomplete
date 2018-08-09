@@ -6,14 +6,14 @@ import { ACService } from './autocomplete/slarn-autocomplete.service';
 import { HttpClientModule } from '@angular/common/http';
 import {AutoGrowDirective} from "./autocomplete/auto-grow.directive";
 import {FocusedDirective} from "./autocomplete/focus.directive";
-import {SafeHtmlPipe} from "./autocomplete/safe-html.pipe";
+import {RenderSafelyPipe} from "./autocomplete/render-safely.pipe";
 
 @NgModule({
   imports: [
     CommonModule, HttpClientModule
   ],
   declarations: [
-    SlarnAutocompleteComponent, SlarnAutocompleteSuggestionComponent, AutoGrowDirective, FocusedDirective, SafeHtmlPipe
+    SlarnAutocompleteComponent, SlarnAutocompleteSuggestionComponent, AutoGrowDirective, FocusedDirective, RenderSafelyPipe
   ],
   providers: [ACService],
   exports: [

@@ -41,6 +41,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   private typingTimer = null;
   private doneTypingInterval = 250;
   private _selectedIndexFromNavigation: number = -1;
+  // private _isLocalConfig: boolean;
 
   displaySuggestions: boolean = false;
   loadingData: boolean = false;
@@ -52,7 +53,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   @ViewChild('spanX') spanX: ElementRef;
   @ViewChildren('acsuggestion') suggestions: QueryList<SlarnAutocompleteSuggestionComponent>;
 
-  @Input('configuration') configuration: ACLocalConfiguration | ACRemoteConfiguration;
+  @Input('configuration') configuration: any;
   @Output('onItemSelected') onItemSelected: EventEmitter<any> = new EventEmitter();
 
   constructor(private _service: ACService) {
@@ -162,10 +163,10 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    */
   private initConfiguration() {
     // if (!this.configuration.emptyListView) this.configuration.emptyListView = 'No match found!';
-    if (!(<ACRemoteConfiguration> this.configuration).loadingView) (<ACRemoteConfiguration> this.configuration).loadingView = 'Loading data...';
     if (!this.configuration.multiple) this.configuration.multiple = false;
     if (!this.configuration.template) this.configuration.template = '<div>#' + this.configuration.value + '#</div>';
     if (!(<ACRemoteConfiguration> this.configuration).minCharacters) (<ACRemoteConfiguration> this.configuration).minCharacters = 1;
+    if (!(<ACRemoteConfiguration> this.configuration).loadingView) (<ACRemoteConfiguration> this.configuration).loadingView = 'Loading data...';
   }
 
   /**
