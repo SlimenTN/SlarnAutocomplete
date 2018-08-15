@@ -46,6 +46,8 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   displaySuggestions: boolean = false;
   loadingData: boolean = false;
   filteredItems: Array<any> = [];
+  groups: Array<string> = null;
+  filteredGroupedItems: any;
 
   @ViewChild('autocompleteInput') autocompleteInput: ElementRef;
   @ViewChild('displayAllBtn') displayAllBtn: ElementRef;
@@ -277,10 +279,35 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         this.enableSelectionForSelectedSuggestion(this._selectedIndexFromNavigation);
         break;
       case 13:// enter key pressed
-        let item: any = this.filteredItems[this._selectedIndexFromNavigation];
-        this.performSelection(item, this._selectedIndexFromNavigation);
+        let item: any = (this.configuration.group == null) ?
+          this.filteredItems[this._selectedIndexFromNavigation] :
+          // in case of using group _selectedIndexFromNavigation does not map with the correct index of filteredItems
+          // that's why we do an extra work to get the correct item from the available index
+          this.getItemFromGroup(this._selectedIndexFromNavigation);
+
+        this.performSelection(item);
         break;
     }
+  }
+
+  /**
+   * Get the right selected item when pressing enter key
+   * @param i
+   * @returns right item
+   */
+  private getItemFromGroup(i: number){
+    let counter = 0;
+    let selectedItem = null;
+    console.log('groups', this.groups);
+    for(let grp of this.groups){
+      console.log('grp', grp);
+      let _a: Array<any> = this.filteredGroupedItems[grp];
+      for(let item of _a){
+        if(i == counter) selectedItem = item;
+        counter++;
+      }
+    }
+    return selectedItem;
   }
 
   private enableSelectionForSelectedSuggestion(index: number){
@@ -307,6 +334,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   deleteFromSelectedItems(indexInSelectedItems: number, si: SelectedItem) {
     this._selectedItem.splice(indexInSelectedItems, 1);
     this.filteredItems.splice(si.indexInFilteredItems, 0, si.elem);
+    this.buildGroupsIfNeeded();
     (<Array<number | string>> this._selectedId).splice(indexInSelectedItems, 1);
 
     if (this._selectedItem.length == 0) {
@@ -353,13 +381,14 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    */
   private searchLocally(word: string, data: Array<any>) {
     this.filteredItems = [];
-    const selectedItemsAsString = JSON.stringify(this._selectedItem);
     data.forEach((item) => {
       let _str = JSON.stringify(item);
       if (
         _str.toLowerCase().indexOf(word.toLowerCase()) != -1 // if word exist in item
         && !this.existInSelectedItems(item) // and does not exist in selected items
       ) this.filteredItems.push(item);// then add it to filteredItems to be displayed in suggestions list
+
+      this.buildGroupsIfNeeded();
     });
   }
 
@@ -395,8 +424,47 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         if (!this.existInSelectedItems(item)) this.filteredItems.push(item);
       });
       if (selectItemAfterSearch) this.selectItemFromData(this.filteredItems);
+      this.buildGroupsIfNeeded();
       this.loadingData = false;
     });
+  }
+
+  /**
+   * If grouping is requested by the user then we need to prepare it
+   */
+  private buildGroupsIfNeeded(){
+    if(this.configuration.group != null){
+      // console.log('before grouping', this.filteredItems);
+      this.groups = [];
+      this.filteredGroupedItems = {};
+
+      let groupedData = this.group(this.filteredItems, this.configuration.group.field);
+      let self = this;
+      Object.keys(groupedData).sort().forEach(function(key) {
+        self.filteredGroupedItems[key] = groupedData[key];
+      });
+      this.groups = Object.keys(this.filteredGroupedItems);
+      // console.log('filteredGroupedItems', this.filteredGroupedItems);
+      // console.log('groups', this.groups);
+    }
+  }
+
+  /**
+   * Pares array of items and return grouped object by the given field
+   * @param list
+   * @param keyGetter
+   * @returns Grouped object
+   */
+  private group(list, keyGetter) {
+    if(typeof keyGetter === 'undefined')
+      throw new Error('You have added the option "group" to the autocomplete but forgot to specify the "field".');
+    const map = {};
+    list.forEach((item) => {
+      const key = keyGetter(item);
+      if (!(key in map)) map[key] = [];
+      map[key].push(item);
+    });
+    return map;
   }
 
   /**
@@ -404,7 +472,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    * @param object
    * @return string built view
    */
-  buildView(object: any): string {
+  buildSuggestionView(object: any): string {
     // console.log('object.toString()', object.toString());
     let view: string = this.configuration.template;
     this._templateVariables.forEach((res: string) => {
@@ -413,6 +481,20 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
       view = view.replace(res, value);// replace words with object value
     });
     return view;
+  }
+
+  /**
+   * Build the view of the group based on giving template
+   * @param {string} group
+   * @returns {string | any | void}
+   */
+  buildGroupView(group: string){
+    let template: string;
+    if(!this.configuration.group.template || this.configuration.group.template == '')
+      template = '<div style="background: #a7a3a3;padding: 5px;font-weight: bold;color: #fff;">#__group__#</div>';
+    else
+      template = this.configuration.group.template;
+    return template.replace('#__group__#', group);
   }
 
   /**
@@ -444,17 +526,20 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   /**
    * Triggered after a user select a suggestion
    * @param item selected item from the list
-   * @param index the index of the item in the filtered items
    */
-  performSelection(item: any, index: number) {
+  performSelection(item: any) {
     // console.log('selected item', item);
     if (this.configuration.multiple) {
+
+      let index = this.filteredItems.findIndex(e => e[this.configuration.key] == item[this.configuration.key]);
+      console.log('index', index);
       if (this._selectedItem == null) this._selectedItem = [];
       let o: SelectedItem = {elem: item, indexInFilteredItems: index};
       // console.log('o', o);
       this._selectedItem.push(o);
       this.filteredItems.splice(index, 1);
       if (this.filteredItems.length == 0) this.displaySuggestions = false;// if filteredItems list is empty then hide suggestions list
+      this.buildGroupsIfNeeded();
 
       if (this._selectedId == null) this._selectedId = [];
       (<Array<number | string>> this._selectedId).push(item[this.configuration.key]);
@@ -546,11 +631,11 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    */
   appendItem(item: any, selectIt: boolean){
     if ((<ACLocalConfiguration> this.configuration).data) {
-      selectIt = selectIt || false;
+      selectIt = (typeof selectIt === 'undefined') ? false : selectIt;
       let i =this.findItem((<ACLocalConfiguration> this.configuration).data, item);
       if(i == undefined){
         (<ACLocalConfiguration> this.configuration).data.push(item);
-        if(selectIt) this.performSelection(item, (<ACLocalConfiguration> this.configuration).data.length-1);
+        if(selectIt) this.performSelection(item);
       }else{
         throw new Error('An item with the same "key" value already exist in the "data" array: '+JSON.stringify(i)+'\n' +
           'Unable to append the item '+JSON.stringify(item));
@@ -622,19 +707,32 @@ export interface Configuration {
    */
   key: string;
 
-  // value will be displayed to the user in the input
+  /**
+   * value will be displayed to the user in the input
+   */
   value: string;
 
-  // template that will be displayed in the suggestions list
-  // if this attribute is not defined then the autocomplete will
-  // use the default template and display only the value
+  /**
+   * template that will be displayed in the suggestions list
+   * if this attribute is not defined then the autocomplete will
+   * use the default template and display only the value
+   */
   template?: string;
 
-  // name will be giving to the input
+  /**
+   * name will be giving to the input
+   */
   name?: string
 
-  // allow multiple selection (default: false)
+  /**
+   * allow multiple selection (default: false)
+   */
   multiple?: boolean;
+
+  /**
+   * allow to group items by a specific field
+   */
+  group?: Group;
 }
 
 /**
@@ -662,6 +760,22 @@ export interface ACRemoteConfiguration extends Configuration {
  */
 export interface ACLocalConfiguration extends Configuration {
   data: Array<any>;
+}
+
+/**
+ * Group items
+ */
+export interface Group{
+  /**
+   * Arrow function to specify the group field
+   * Used arrow function instead of a simple field cuz the group field can be a field of another complex object
+   */
+  field: any;
+
+  /**
+   * Block that will be rendered for the group
+   */
+  template?: string;
 }
 
 /**

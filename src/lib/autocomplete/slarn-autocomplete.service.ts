@@ -12,7 +12,6 @@ export class ACService {
     search(word: string, url: string): Observable<any>{
         let _url = new URL(url);
         _url.searchParams.append('ac-reg', word);
-        // console.log('url', _url.toString());
         return this._http.get(_url.toString());
     }
 }

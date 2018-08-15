@@ -1,5 +1,5 @@
 <div #container class="slarn-autocomplete-container" style="position: relative;">
-  <!-- Hidden select will contain the key of the selected item -->
+  <!-- Hidden select will contain the key(s) of the selected item(s) -->
   <select
     [attr.name]="(configuration.name) ? configuration.name : null"
     [attr.multiple]="(configuration.multiple) ? 'multiple' : null">
@@ -29,24 +29,41 @@
          (keyup)="onKeyup($event)" (keydown)="onKeyDown($event)"
          [attr.value]="(!configuration.multiple && _selectedItem != null) ? _selectedItem[configuration.value] : null">
   <span #spanX style="display: none;"></span>
+
   <!-- Display all button -->
   <button #displayAllBtn
           class="toggle-suggestions-display"
           (click)="toggleDisplaySuggestions()">
   </button>
 
+  <!-- Suggestions container -->
   <div class="suggestions" [style.display]="(displaySuggestions) ? 'block' : 'none'">
-    <!-- Suggestions list  -->
-    <slarn-ac-suggestion #acsuggestion *ngFor="let e of filteredItems; let i = index;" [item]="e"
-                         (onSuggestionClicked)="performSelection($event, i)">
-      <div [innerHTML]="buildView(e) | renderSafely"></div>
-    </slarn-ac-suggestion>
+    <!--============== Suggestions list ====================-->
+    <!-- Display suggestions without grouping -->
+    <ng-container *ngIf="configuration.group == null">
+      <slarn-ac-suggestion #acsuggestion *ngFor="let e of filteredItems; let i = index;" [item]="e"
+                           (onSuggestionClicked)="performSelection($event)">
+        <div [innerHTML]="buildSuggestionView(e) | renderSafely"></div>
+      </slarn-ac-suggestion>
+    </ng-container>
+
+    <!-- Display suggestions with grouping -->
+    <ng-container *ngIf="configuration.group != null">
+      <div *ngFor="let g of groups">
+        <div [innerHTML]="buildGroupView(g) | renderSafely"></div>
+        <slarn-ac-suggestion #acsuggestion *ngFor="let e of filteredGroupedItems[g]; let i = index;" [item]="e"
+                             (onSuggestionClicked)="performSelection($event)">
+          <div [innerHTML]="buildSuggestionView(e) | renderSafely"></div>
+        </slarn-ac-suggestion>
+      </div>
+    </ng-container>
+    <!--============== End Suggestions list =================-->
 
     <!-- Displayed when no match found -->
     <div #emptyResult *ngIf="filteredItems != null && filteredItems.length == 0 && !loadingData"
          class="no-match-found">
-          <ng-content select=".empty-result-view"></ng-content>
-          <ng-container *ngIf="emptyResult.children.length == 0">No match found!</ng-container>
+      <ng-content select=".empty-result-view"></ng-content>
+      <ng-container *ngIf="emptyResult.children.length == 0">No match found!</ng-container>
     </div>
 
     <!--  Displayed when loading data from api -->
