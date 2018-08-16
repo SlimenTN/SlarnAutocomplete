@@ -1,11 +1,18 @@
 .slarn-autocomplete-container {
-  /* border: solid 1px #cacaca; */
-  /* height: 30px; */
   padding-top: 3px;
-  /*padding-bottom: 3px;*/
-  padding-left: 3px;
   margin: 0;
-  padding-right: 10px;
+  position: relative;
+}
+
+.container-rtl-direction{
+  padding-left: 15px;
+  padding-right: 3px;
+  direction: rtl;
+}
+
+.container-ltr-direction{
+  padding-left: 3px;
+  padding-right: 15px;
 }
 
 .slarn-autocomplete-container select {
@@ -27,9 +34,16 @@
 
 .slarn-autocomplete-container .selected-options {
   font-size: 14px;
-  margin-right: 5px;
   margin-bottom: 3px;
   display: inline-block;
+}
+
+.selected-options-rtl{
+  margin-left: 5px;
+}
+
+.selected-options-ltr{
+  margin-right: 5px;
 }
 
 .slarn-autocomplete-container .selected-options .text {
@@ -49,10 +63,6 @@
   background-position: center;
 }
 
-.slarn-autocomplete-container .selected-options .remove:hover {
-  /*background-color: #ececec;*/
-}
-
 .slarn-autocomplete-container .suggestions {
   position: absolute;
   width: 100%;
@@ -62,7 +72,6 @@
   max-height: 200px;
   overflow-y: auto;
   left: -1px;
-  /*margin-top: 1px;*/
 }
 
 .slarn-autocomplete-container .no-match-found, .loading-data {
@@ -71,17 +80,13 @@
 
 .slarn-autocomplete-container .toggle-suggestions-display {
   position: absolute;
-  right: 0;
+  /*right: 0;*/
   height: 100%;
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiBwcLEx22EzYqAAAAW0lEQVQoz2NgGAyAm2EFgxBWGRGG1QysTAxfGZ4z7MGiRIRhH8Mdht8QTj/DOTQlwgwXGdqRBVCVCDNcQJVGVSLEcB5TGqEEpzRMyTnc0gwMDAytDPV0DWSiAAC0ghX2P8wBMwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOC0wNy0wN1QxMToxOToyOSswMjowMHRLTC0AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTgtMDctMDdUMTE6MTk6MjkrMDI6MDAFFvSRAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAABJRU5ErkJggg==');
   background-repeat: no-repeat;
   background-position: center center;
   cursor: pointer;
   width: 30px;
-  /* border-left: solid 1px #cacaca;
-  border-bottom: none;
-  border-right: none;
-  border-top: none; */
   background-color: white;
 }
 

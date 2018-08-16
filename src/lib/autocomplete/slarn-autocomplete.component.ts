@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import {ACService} from './slarn-autocomplete.service';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ACTranslator, dynamic_translation, translator} from "./translation";
 
 @Component({
   selector: 'slarn-autocomplete',
@@ -48,6 +49,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   filteredItems: Array<any> = [];
   groups: Array<string> = null;
   filteredGroupedItems: any;
+  translator = translator;
 
   @ViewChild('autocompleteInput') autocompleteInput: ElementRef;
   @ViewChild('displayAllBtn') displayAllBtn: ElementRef;
@@ -83,11 +85,11 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     }
 
     if (!this.configuration.multiple && Array.isArray(value))
-      throw new Error('You have passed an array value to be selected\n either change the value or set the "multiple" option to true in the configuration.');
+      throw new Error(this.translator.dictionary.errors.passingArrayValueWithNoMultipleOption[this.configuration.language]);
 
     if ((Array.isArray(value) && this.arrayHasObject(value))
       || (!Array.isArray(value) && typeof value === 'object'))
-      throw new Error('The type of "selectedId" must be number, string or Array of numbers or strings!');
+      throw new Error(this.translator.dictionary.errors.unknownType[this.configuration.language]);
   }
 
   /**
@@ -123,9 +125,9 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   ngAfterViewInit() {
     this.extractTemplateVariables();
 
-    // I called this listener in ngAfterViewInit because I cant the listener
+    // I called this listener in ngAfterViewInit because I don't want the listener
     // to be set one time
-    // ngOnInit is fired after ngOnChanges which is called eafter any change in the view
+    // ngOnInit is fired after ngOnChanges which is called after any change in the view
     document.addEventListener('click', this.checkIfClickedInside, true);
   }
 
@@ -164,11 +166,25 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    * Init default configuration
    */
   private initConfiguration() {
-    // if (!this.configuration.emptyListView) this.configuration.emptyListView = 'No match found!';
+    if (!this.configuration.rtl) this.configuration.rtl = false;
+    this.prepareUsedLanguage();
     if (!this.configuration.multiple) this.configuration.multiple = false;
     if (!this.configuration.template) this.configuration.template = '<div>#' + this.configuration.value + '#</div>';
     if (!(<ACRemoteConfiguration> this.configuration).minCharacters) (<ACRemoteConfiguration> this.configuration).minCharacters = 1;
-    if (!(<ACRemoteConfiguration> this.configuration).loadingView) (<ACRemoteConfiguration> this.configuration).loadingView = 'Loading data...';
+    if (!(<ACRemoteConfiguration> this.configuration).loadingView)
+      (<ACRemoteConfiguration> this.configuration).loadingView = translator.dictionary.loadingText[this.configuration.language];
+  }
+
+  private prepareUsedLanguage(){
+    if(!this.configuration.language) this.configuration.language = ACTranslator.EN;
+    if(this.configuration.language && translator.availableLanguages.indexOf(this.configuration.language) == -1){
+      let translation = dynamic_translation(
+        this.translator.dictionary.errors.unknownLanguage[ACTranslator.EN],
+        [this.configuration.language, JSON.stringify(translator.availableLanguages)]
+      );
+      throw new Error(translation);
+    }
+
   }
 
   /**
@@ -457,7 +473,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    */
   private group(list, keyGetter) {
     if(typeof keyGetter === 'undefined')
-      throw new Error('You have added the option "group" to the autocomplete but forgot to specify the "field".');
+      throw new Error(this.translator.dictionary.errors.unknownFieldForGroupOption[this.configuration.language]);
     const map = {};
     list.forEach((item) => {
       const key = keyGetter(item);
@@ -477,7 +493,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     let view: string = this.configuration.template;
     this._templateVariables.forEach((res: string) => {
       let key = res.replace(/\#/g, '');// remove # from the string
-      let value: string = (key.indexOf('.') == -1) ? object[key] : this.extractValue(key, object);
+      let value: string = this.extractValue(key, object);
       view = view.replace(res, value);// replace words with object value
     });
     return view;
@@ -511,7 +527,13 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     let _currentObject = object;
 
     keys.forEach(key => {
-      if (!(key in _currentObject)) throw new Error('Can\'t find the key "' + key + '" in the object "' + JSON.stringify(_currentObject) + '"!');
+      if (!(key in _currentObject)){
+        let translation = dynamic_translation(
+          this.translator.dictionary.errors.unknownKeyValue[this.configuration.language],
+          [key, JSON.stringify(_currentObject)]
+        );
+        throw new Error(translation);
+      }
 
       if (counter < size) {
         _currentObject = _currentObject[key];
@@ -637,14 +659,15 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         (<ACLocalConfiguration> this.configuration).data.push(item);
         if(selectIt) this.performSelection(item);
       }else{
-        throw new Error('An item with the same "key" value already exist in the "data" array: '+JSON.stringify(i)+'\n' +
-          'Unable to append the item '+JSON.stringify(item));
+        let translation = dynamic_translation(
+          this.translator.dictionary.errors.duplicateItemDetected[this.configuration.language],
+          [JSON.stringify(i), JSON.stringify(item)]
+        );
+        throw new Error(translation);
       }
 
     }else{
-      throw new Error('"appendItem()" function is for local configuration only\n ' +
-        'If you are using an API (remote configuration) and you add a new object to it ' +
-        'then this new object will be available when you start typing in the autocomplete.');
+      throw new Error(this.translator.dictionary.errors.appendItemWorkOnlyLocally[this.configuration.language]);
     }
   }
 
@@ -718,6 +741,16 @@ export interface Configuration {
    * use the default template and display only the value
    */
   template?: string;
+
+  /**
+   * The language that will be used to display default texts and errors
+   */
+  language?: string;
+
+  /**
+   * RTL Support (false by default)
+   */
+  rtl?: boolean;
 
   /**
    * name will be giving to the input

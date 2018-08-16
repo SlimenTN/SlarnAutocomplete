@@ -5,10 +5,7 @@
 
 .slarn-autocomplete-container .toggle-suggestions-display {
     top: 0;
-    border-left: solid 1px #cacaca;
-    border-bottom: none;
-    border-right: none;
-    border-top: none;
+    border: none;
 }
 
 .slarn-autocomplete-container .selected-options {
@@ -19,7 +16,6 @@
 
 .slarn-autocomplete-container .selected-options .remove {
   background: white;
-  border-left: solid 1px #cacaca;
 }
 
 .slarn-autocomplete-container .suggestions {

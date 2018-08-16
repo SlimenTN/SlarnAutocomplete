@@ -1,4 +1,4 @@
-<div #container class="slarn-autocomplete-container" style="position: relative;">
+<div #container class="slarn-autocomplete-container" [ngClass]="{'container-rtl-direction': configuration.rtl, 'container-ltr-direction': !configuration.rtl}">
   <!-- Hidden select will contain the key(s) of the selected item(s) -->
   <select
     [attr.name]="(configuration.name) ? configuration.name : null"
@@ -17,7 +17,9 @@
 
   <!-- When autocomplete is multiple _selectedItems will be displayed here -->
   <ng-container *ngIf="configuration.multiple && _selectedItem != null">
-        <span class="selected-options" *ngFor="let si of _selectedItem; let o = index;">
+        <span class="selected-options"
+              [ngClass]="{'selected-options-rtl': configuration.rtl, 'selected-options-ltr': !configuration.rtl}"
+              *ngFor="let si of _selectedItem; let o = index;">
             <span class="text" *ngIf="si.elem != undefined">{{si.elem[configuration.value]}}</span> <span class="remove"
                                                                                                           (click)="deleteFromSelectedItems(o, si)">&nbsp;</span>
         </span>
@@ -33,7 +35,8 @@
   <!-- Display all button -->
   <button #displayAllBtn
           class="toggle-suggestions-display"
-          (click)="toggleDisplaySuggestions()">
+          (click)="toggleDisplaySuggestions()"
+          [style.right]="(!configuration.rtl) ? '0': null" [style.left]="(configuration.rtl) ? '0': null">
   </button>
 
   <!-- Suggestions container -->
@@ -63,7 +66,7 @@
     <div #emptyResult *ngIf="filteredItems != null && filteredItems.length == 0 && !loadingData"
          class="no-match-found">
       <ng-content select=".empty-result-view"></ng-content>
-      <ng-container *ngIf="emptyResult.children.length == 0">No match found!</ng-container>
+      <ng-container *ngIf="emptyResult.children.length == 0">{{translator.dictionary.noMatchFoundText[configuration.language]}}</ng-container>
     </div>
 
     <!--  Displayed when loading data from api -->
