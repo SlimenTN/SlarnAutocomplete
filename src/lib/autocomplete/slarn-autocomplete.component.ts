@@ -501,8 +501,8 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
 
   /**
    * Build the view of the group based on giving template
-   * @param {string} group
-   * @returns {string | any | void}
+   * @param group
+   * @returns
    */
   buildGroupView(group: string){
     let template: string;

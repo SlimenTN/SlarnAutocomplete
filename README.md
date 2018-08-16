@@ -2,9 +2,9 @@
 An angular package for a very simple yet powerful autocomplete component
 
 ## Default theme
-Simple selection           |  Multiple selection 
+Simple selection           |  Multiple selection (with grouping)
 :-------------------------:|:-------------------------:
-![slarn-autocomplete preview](doc/basic.png)  |  ![slarn-autocomplete preview](doc/multiple.png)
+![slarn-autocomplete preview](doc/default-single.png)  |  ![slarn-autocomplete preview](doc/default-multiple.png)
 
 ## Material design theme
 Simple selection            |  Multiple selection
@@ -170,13 +170,16 @@ or using `ngModel`
 ### Common configuration
 | Name          | Details|Status|
 |---------------|--------|------|
-|template: `string`       |The html view that you want to be displayed to the user, awesome right :)| Optional
 |key: `string` | Will be stored in the autocomplete (will be used to select an option or when sending a form)|Required
 |value: `string`| Will be displayed in the autocomplete|Required
-|multiple: `boolean`|switch between simple or multiple selection|Optional
-|name: `string`|Set a specific name to the input (in case you work with forms and you want a specific name)|Optional
-|~~placeHolder~~: `string` (no longer available)|Place holder of the autocomplete|Optional
-|~~emptyListView~~: `boolean` (no longer available in the configuration but replaced by `ng-container`)|The text or the html view that will be rendered when no match found|Optional (default text: `No match found!`)
+|template: `string`| The html view that you want to be displayed to the user| Optional
+|multiple: `boolean`| Switch between simple or multiple selection|Optional
+|name: `string`| Set a specific name to the input (in case you work with forms and you want a specific name)|Optional
+|rtl: `boolean`| RTL Support| Optional: (`false` bu default)
+|language: `string`| Select the language that will be used in the default texts and console errors<br>Available languages: `en`, `fr` and `ar`<br>**If you don't find your language please feel free to send a pull request for it**| Optional (`en` by default)
+|group: `Group`| Group items by a specific field (contains 2 options: `field` and `tempalte`) | Optional
+|group.field `Arrow function`| The field that you want to group by, and must be an arrow function ex:<br>`group: { field: item => item.groupAttribute } ` or <br>`group: { field: item => item.subItem.groupAttribute } `| Required
+|group.template `string`| The view that you want to be rendered for the group ex:<br> `group:{ template: '<strong>#__group__#</strong>'}`<br>`#__group__#` is where you want to display the group name| Optional
 
 ### Local configuration
 | Name          | Details|Status|
@@ -186,8 +189,8 @@ or using `ngModel`
 ### Remote configuration
 | Name          | Details|Status|
 |---------------|--------|------|
-|url: `string`|Contains the url to the api |Required
-|minCharacters: `number`|minimal number of characters typed before calling the `api` |Optional
+|url: `string`|URL of your API |Required
+|minCharacters: `number`|minimal number of characters typed before calling the API |Optional
 |loadingView: `string`|The text or the html view that will be rendered while loading data remotely|Optional (default text: `Loading data...`)
 
 ### Render `emptyListView`
