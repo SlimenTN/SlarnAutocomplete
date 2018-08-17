@@ -9,9 +9,10 @@
 }
 
 .slarn-autocomplete-container .selected-options {
+  margin-top: 3px;
   border: solid 1px #cacaca;
   border-radius: 3px;
-  padding: 3px;
+  padding: 2px;
 }
 
 .slarn-autocomplete-container .selected-options .remove {
