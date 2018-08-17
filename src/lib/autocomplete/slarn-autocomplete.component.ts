@@ -224,6 +224,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
       data.forEach(item => {
         if (item[this.configuration.key] == this._selectedId) {
           this._selectedItem = item;
+          this.autocompleteInput.nativeElement.value = this._selectedItem[this.configuration.value];
         }
       });
     }
@@ -611,6 +612,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
 
   writeValue(value) {
     // after setting key value we search for the related item
+
     if (value != '' && value != null && value != undefined) {
       this.filterSelectedValue(value);
       this.searchAndSelectItemFromKey();
