@@ -146,6 +146,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    * Clear autocomplete selection
    */
   clearAutocomplete() {
+    this.autocompleteInput.nativeElement.value = '';
     this._selectedItem = null;
     this._selectedId = null;
     this.filteredItems = [];
