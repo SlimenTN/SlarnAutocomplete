@@ -606,14 +606,16 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     this.propagateChange = fn;
   }
 
-  registerOnTouched(fn: any) {
-  }
+  registerOnTouched(fn: any) { }
 
   writeValue(value) {
     // after setting key value we search for the related item
     if (value != '' && value != null && value != undefined) {
       this.filterSelectedValue(value);
       this.searchAndSelectItemFromKey();
+    }else{
+      this.clearAutocomplete();
+      this.dispatchData();
     }
   }
 
