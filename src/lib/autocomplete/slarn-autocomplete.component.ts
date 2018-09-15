@@ -268,7 +268,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
           // when working remotely and for better user experience
           // the searchRemotely function will be fired when user finish typing
           // and we assume that finishing typing means not pressing key for like 250ms
-          if((<ACRemoteConfiguration> this.configuration).minCharacters == reg.length){// make sure to call api after typing the need number of characters
+          if((<ACRemoteConfiguration> this.configuration).minCharacters <= reg.length){// make sure to call api after typing the need number of characters
             this.displaySuggestions = true;
             this.loadingData = true;
             this.filteredItems = [];
