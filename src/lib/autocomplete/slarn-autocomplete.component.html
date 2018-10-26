@@ -1,4 +1,5 @@
 <div #container class="slarn-autocomplete-container" [ngClass]="{'container-rtl-direction': configuration.rtl, 'container-ltr-direction': !configuration.rtl}">
+  <div class="curtan" *ngIf="disabled"></div>
   <!-- Hidden select will contain the key(s) of the selected item(s) -->
   <select
     [attr.name]="(configuration.name) ? configuration.name : null"

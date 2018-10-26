@@ -58,6 +58,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   @ViewChildren('acsuggestion') suggestions: QueryList<SlarnAutocompleteSuggestionComponent>;
 
   @Input('configuration') configuration: any;
+  @Input('disabled') disabled: boolean;
   @Output('onItemSelected') onItemSelected: EventEmitter<any> = new EventEmitter();
 
   constructor(private _service: ACService) {
@@ -128,7 +129,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     // I called this listener in ngAfterViewInit because I don't want the listener
     // to be set one time
     // ngOnInit is fired after ngOnChanges which is called after any change in the view
-    document.addEventListener('click', this.checkIfClickedInside, true);
+    if(!this.disabled) document.addEventListener('click', this.checkIfClickedInside, true);
   }
 
   /**
@@ -629,6 +630,8 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
    * Open suggestions list
    */
   openSuggestions(){
+    if(this.disabled) return;
+    
     if(!this.displaySuggestions){
       this.displaySuggestions = true;
       if ((<ACLocalConfiguration> this.configuration).data) {// if it's local configuration

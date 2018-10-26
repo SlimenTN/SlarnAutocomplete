@@ -26,6 +26,7 @@
   background: #ececec;
   border-radius: 50px;
   padding: 5px;
+  margin-top: 3px;
 }
 
 .slarn-autocomplete-container .selected-options .remove {

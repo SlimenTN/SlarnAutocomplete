@@ -4,6 +4,15 @@
   position: relative;
 }
 
+.slarn-autocomplete-container .curtan{
+  position: absolute;
+  background: #0000000f;
+  width: 100%;
+  z-index: 1;
+  left: -0.5px;
+  height: 100%;
+}
+
 .container-rtl-direction{
   padding-left: 15px;
   padding-right: 3px;
@@ -25,7 +34,7 @@
   width: 10px;
   box-sizing: border-box;
   border: none;
-  min-height: 25px;
+  min-height: 28px;
   background-color: transparent;
 }
 
