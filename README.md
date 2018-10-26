@@ -215,6 +215,7 @@ But if you want to render a template of your own you can use `ng-container` insi
 | Name          | Details|Status|
 |---------------|--------|------|
 |`@Input`<br>configuration| Contains your custom configuration of the autocomplete| Required
+|`@Input`<br>disabled| Disable autocomplete| Optional
 |`@Input`<br>selectedId| Contains one or more id of the items that you want to be selected|
 |`@Output`<br>onItemSelected| Event will be fired after selecting an item (`$event` will be the selected item)
 
