@@ -115,7 +115,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
   /**
    * Return the selected item(s)
    */
-  get selectedItem(): any {
+  get selectedData(): any {
     return (Array.isArray(this._selectedItem)) ? this.extractSelectedItems() : this._selectedItem;
   }
 
@@ -229,6 +229,8 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
         }
       });
     }
+    // make sure to dispatch data after selection
+    this.dispatchData();
   }
 
   /**

@@ -222,6 +222,7 @@ But if you want to render a template of your own you can use `ng-container` insi
 ## Functions
 | Name          | Details|
 |---------------|--------|
+|`getter`<br>selectedData| Returns selected data (`{}` | `Array<{}>`)
 |openSuggestions()| Open the list of suggestions
 |closeSuggestions()| Close the list of suggestions
 |appendItem(`item`: any, `selectIt`: boolean)<br>`item`: the item that you want to add it<br> `selectIt`: set it to true if you want to select this item after adding it (false by default)| Add items dynamically to the autocomplete **(works only with local configuration)**
