@@ -214,10 +214,11 @@ But if you want to render a template of your own you can use `ng-container` insi
 ## Inputs and Outputs
 | Name          | Details|Status|
 |---------------|--------|------|
-|`@Input`<br>configuration| Contains your custom configuration of the autocomplete| Required
-|`@Input`<br>disabled| Disable autocomplete| Optional
-|`@Input`<br>selectedId| Contains one or more id of the items that you want to be selected|
-|`@Output`<br>onItemSelected| Event will be fired after selecting an item (`$event` will be the selected item)
+|`@Input`<br>configuration: `ACLocalConfiguration` or `ACRemoteConfiguration`| Contains your custom configuration of the autocomplete| Required
+|`@Input`<br>disabled: `boolean`| Disable autocomplete| Optional
+|`@Input`<br>unselectable: `Array<string | number>`| Disable some specific items (won't be able to select them) | Optional
+|`@Input`<br>selectedId: `any | Array<SelectedItem>`| Contains one or more id of the items that you want to be selected|
+|`@Output`<br>onItemSelected: `any`| Event will be fired after selecting an item (`$event` will be the selected item)
 
 ## Functions
 | Name          | Details|

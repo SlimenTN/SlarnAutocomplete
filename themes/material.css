@@ -12,7 +12,8 @@
 }
 
 .slarn-autocomplete-container .toggle-suggestions-display {
-    top: -2px;
+    /* top: -2px; */
+    height: 93%;
     border: none ;
 }
 

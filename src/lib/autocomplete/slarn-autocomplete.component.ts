@@ -59,6 +59,7 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
 
   @Input('configuration') configuration: any;
   @Input('disabled') disabled: boolean;
+  @Input('unselectable') unselectable: Array<string | number> = [];
   @Output('onItemSelected') onItemSelected: EventEmitter<any> = new EventEmitter();
 
   constructor(private _service: ACService) {
@@ -517,6 +518,16 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
       template = this.configuration.group.template;
     return template.replace('#__group__#', group);
   }
+  
+  /**
+   * Check if item is listed as unselectable item
+   * by checking if it exist in this.unselectable array
+   * 
+   * @param item
+   */
+  isItemUnselectable(item: any){
+    return (this.unselectable.includes(item[this.configuration.key]));
+  }
 
   /**
    * Extract the correct value from the multidimensional object
@@ -701,22 +712,40 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
 @Component({
   selector: 'slarn-ac-suggestion',
   template: `
-    <div class="sg" (click)="selectItem()" [focused]="focusSuggestion">
-      <ng-content></ng-content>
+    <div [class.unselectable]="unselectable" class="sg" (click)="selectItem()" [focused]="focusSuggestion">
+      <div *ngIf="unselectable" class="suggestion-curtain"></div>
+      <div class="content">
+        <ng-content></ng-content>
+      </div>
     </div>
   `,
   styles: [`
     .sg {
-      padding: 5px;
       cursor: default;
+      position: relative;
     }
-    .sg:hover {
+
+    .sg .content{
+      padding: 5px;
+    }
+
+    .sg .suggestion-curtain{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: #ffffffa3;
+      cursor: not-allowed;
+    }
+
+    .sg:not(.unselectable):hover {
       background: #ececec;
     }
+
   `],
 })
 export class SlarnAutocompleteSuggestionComponent implements OnInit {
   @Input('item') item: any;
+  @Input('unselectable') unselectable: boolean = false;
   @Output('onSuggestionClicked') onSuggestionClicked: EventEmitter<any> = new EventEmitter();
   focusSuggestion: boolean = false;
 
@@ -725,7 +754,8 @@ export class SlarnAutocompleteSuggestionComponent implements OnInit {
   ngOnInit() { }
 
   selectItem() {
-    this.onSuggestionClicked.emit(this.item);
+    if(!this.unselectable) this.onSuggestionClicked.emit(this.item);
+    else console.log('this item is unselectable', this.item);
   }
 }
 

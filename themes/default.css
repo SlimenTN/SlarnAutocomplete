@@ -5,6 +5,7 @@
 
 .slarn-autocomplete-container .toggle-suggestions-display {
     top: 0;
+    height: 100%;
     border: none;
 }
 

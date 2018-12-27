@@ -18,7 +18,7 @@
 
   <!-- When autocomplete is multiple _selectedItems will be displayed here -->
   <ng-container *ngIf="configuration.multiple && _selectedItem != null">
-        <span class="selected-options"
+        <span class="selected-options unselectable-text"
               [ngClass]="{'selected-options-rtl': configuration.rtl, 'selected-options-ltr': !configuration.rtl}"
               *ngFor="let si of _selectedItem; let o = index;">
             <span class="text" *ngIf="si.elem != undefined">{{si.elem[configuration.value]}}</span> <span class="remove"
@@ -45,8 +45,11 @@
     <!--============== Suggestions list ====================-->
     <!-- Display suggestions without grouping -->
     <ng-container *ngIf="configuration.group == null">
-      <slarn-ac-suggestion #acsuggestion *ngFor="let e of filteredItems; let i = index;" [item]="e"
-                           (onSuggestionClicked)="performSelection($event)">
+      <slarn-ac-suggestion 
+          #acsuggestion 
+          *ngFor="let e of filteredItems; let i = index;" [item]="e"
+          [unselectable]="isItemUnselectable(e)"
+          (onSuggestionClicked)="performSelection($event)">
         <div [innerHTML]="buildSuggestionView(e) | renderSafely"></div>
       </slarn-ac-suggestion>
     </ng-container>
