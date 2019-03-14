@@ -5,7 +5,7 @@
     [attr.name]="(configuration.name) ? configuration.name : null"
     [attr.multiple]="(configuration.multiple) ? 'multiple' : null">
     <ng-container *ngIf="configuration.multiple && _selectedItem != null">
-      <option *ngFor="let item of _selectedItem" [value]="item[configuration.key]" selected>
+      <option *ngFor="let item of _selectedItem" [value]="(!configuration.multiple) ? item[configuration.key] : item.elem[configuration.key] " selected>
         {{item[configuration.key]}}
       </option>
     </ng-container>

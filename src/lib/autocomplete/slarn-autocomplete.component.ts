@@ -570,10 +570,10 @@ export class SlarnAutocompleteComponent implements OnInit, AfterViewInit, Contro
     if (this.configuration.multiple) {
 
       let index = this.filteredItems.findIndex(e => e[this.configuration.key] == item[this.configuration.key]);
-      console.log('index', index);
+      // console.log('index', index);
       if (this._selectedItem == null) this._selectedItem = [];
       let o: SelectedItem = {elem: item, indexInFilteredItems: index};
-      // console.log('o', o);
+      console.log('o', o);
       this._selectedItem.push(o);
       this.filteredItems.splice(index, 1);
       if (this.filteredItems.length == 0) this.displaySuggestions = false;// if filteredItems list is empty then hide suggestions list

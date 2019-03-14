@@ -6,7 +6,7 @@
 
 .slarn-autocomplete-container .curtan{
   position: absolute;
-  background: #ffffff78;
+  background: rgba(255, 255, 255, 0.47);
   width: 100%;
   z-index: 1;
   left: -0.5px;
